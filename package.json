@@ -6,6 +6,7 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
+    "postinstall": "npm run build",
     "start": "npm run build && nodemon server/server.js",
     "dev": "concurrently \"nodemon server/server.js\" \"npm run serve\""
   },
