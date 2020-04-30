@@ -14,7 +14,10 @@ export default {
   name: 'vuewwebapp',
   methods: {
     onFoo() {
-      console.log('goo');
+      console.log('foo');
+      fetch('/api/foo')
+        .then(data => data.text())
+        .then(res => console.log(res));
     }
   }
 }

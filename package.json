@@ -6,7 +6,8 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "start": "npm run build && nodemon server/server.js"
+    "start": "npm run build && nodemon server/server.js",
+    "dev": "concurrently \"nodemon server/server.js\" \"npm run serve\""
   },
   "dependencies": {
     "concurrently": "^5.2.0",
