@@ -1,16 +1,16 @@
 <template>
   <div id="app">
-    <vuewwebapp />
+    <vuewebapp />
   </div>
 </template>
 
 <script>
-import vuewwebapp from './components/vuewwebapp.vue'
+import vuewebapp from './components/vuewebapp.vue'
 
 export default {
   name: 'App',
   components: {
-    vuewwebapp
+    vuewebapp
   }
 }
 </script>
