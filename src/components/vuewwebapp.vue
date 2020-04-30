@@ -1,14 +1,22 @@
 <template>
   <div>
     <h1>vuewwebapp</h1>
-    <p>An app to reuse in the future (hopefully).</p>
-    <img v-bind:src="'/imgs/img.png'" />
+    <div>
+      <p>An app to reuse in the future (hopefully).</p>
+      <input type="button" value="foo" @click="onFoo" />
+    </div>
+    <img :src="'/imgs/img.png'" />
   </div>
 </template>
 
 <script>
 export default {
-  name: 'vuewwebapp'
+  name: 'vuewwebapp',
+  methods: {
+    onFoo() {
+      console.log('goo');
+    }
+  }
 }
 </script>
 
