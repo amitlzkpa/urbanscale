@@ -1,5 +1,7 @@
 <template>
   <div>
+    <router-link to="/login">Login</router-link>
+    <hr />
     <h1>urbanscale</h1>
     <div>
       <p>An app to reuse in the future (hopefully).</p>
