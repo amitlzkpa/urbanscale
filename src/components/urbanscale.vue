@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>vuewebapp</h1>
+    <h1>urbanscale</h1>
     <div>
       <p>An app to reuse in the future (hopefully).</p>
       <input type="button" value="foo" @click="onFoo" />
@@ -11,7 +11,7 @@
 
 <script>
 export default {
-  name: 'vuewebapp',
+  name: 'urbanscale',
   methods: {
     onFoo() {
       console.log('foo');

@@ -1,16 +1,16 @@
 <template>
   <div id="app">
-    <vuewebapp />
+    <urbanscale />
   </div>
 </template>
 
 <script>
-import vuewebapp from './components/vuewebapp.vue'
+import urbanscale from './components/urbanscale.vue'
 
 export default {
   name: 'App',
   components: {
-    vuewebapp
+    urbanscale
   }
 }
 </script>
