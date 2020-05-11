@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import urbanscale from '../components/urbanscale.vue';
+import urbanscale from '@/components/urbanscale.vue';
 
 export default {
   name: 'home',
