@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
-import urbanscale from '../components/urbanscale.vue';
-import login from '../components/login.vue';
+import Home from '../views/Home.vue';
+import Login from '../views/Login.vue';
 
 Vue.use(VueRouter);
 
@@ -12,12 +12,12 @@ export default new VueRouter({
     {
       path: '/',
       name: 'home',
-      component: urbanscale
+      component: Home
     },
     {
       path: '/login',
       name: 'login',
-      component: login
+      component: Login
     }
   ]
 });

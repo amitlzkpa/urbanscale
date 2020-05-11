@@ -1,16 +1,19 @@
 <template>
   <div id="app">
-    <urbanscale />
+    <div id="nav">
+      <router-link to="/">Home</router-link>
+      &nbsp;|&nbsp;
+      <router-link to="/login">Login</router-link>
+    </div>
+    <hr />
+    <router-view />
   </div>
 </template>
 
 <script>
-import urbanscale from './components/urbanscale.vue'
-
 export default {
   name: 'App',
   components: {
-    urbanscale
   }
 }
 </script>
