@@ -1,9 +1,8 @@
 <template>
   <div>
-    <h1>urbanscale</h1>
+    <h1>UrbanScale</h1>
     <div>
-      <p>An app to reuse in the future (hopefully).</p>
-      <input type="button" value="foo" @click="onFoo" />
+      <p>Connect with your local government.</p>
     </div>
     <img :src="'/imgs/img.png'" />
   </div>
@@ -11,15 +10,7 @@
 
 <script>
 export default {
-  name: 'urbanscale',
-  methods: {
-    onFoo() {
-      console.log('foo');
-      fetch('/api/foo')
-        .then(data => data.text())
-        .then(res => console.log(res));
-    }
-  }
+  name: 'urbanscale'
 }
 </script>
 
