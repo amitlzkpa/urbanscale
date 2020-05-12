@@ -8,6 +8,8 @@
     <br />
     <button @click="onClickGetAllBtn">TestGetAll</button>
     <br />
+    <button @click="onClickAddUserBtn">TestAddUser</button>
+    <br />
     <input type="text" v-model="getId" />
     <button @click="onClickGetByIdBtn">TestGetById</button>
     <br />
@@ -17,14 +19,15 @@
     <input type="text" v-model="getUsername" />
     <button @click="onClickGetByUsernameBtn">TestGetByUsername</button>
     <br />
-    <button @click="onClickAddUserBtn">TestAddUser</button>
-    <div>
-      {{ result }}
-    </div>
+    <pre><code>
+{{ result }}
+    </code></pre>
   </div>
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
   name: 'urbanscale',
   data() {
@@ -37,41 +40,34 @@ export default {
   },
   methods: {
     async onClickGetByIdBtn() {
-      let resp = await fetch(`api/users/id/${this.getId}`);
-      let user = await resp.json();
+      let resp = await axios.get(`api/users/id/${this.getId}`);
+      let user = resp.data;
       console.log(user);
       this.result = JSON.stringify(user, null, 4);
     },
     async onClickGetByEmailBtn() {
-      let resp = await fetch(`api/users/email/${this.getEmail}`);
-      let user = await resp.json();
+      let resp = await axios.get(`api/users/email/${this.getEmail}`);
+      let user = resp.data;
       console.log(user);
       this.result = JSON.stringify(user, null, 4);
     },
     async onClickGetByUsernameBtn() {
-      let resp = await fetch(`api/users/username/${this.getUsername}`);
-      let user = await resp.json();
+      let resp = await axios.get(`api/users/username/${this.getUsername}`);
+      let user = await resp.data;
       console.log(user);
       this.result = JSON.stringify(user, null, 4);
     },
     async onClickGetAllBtn() {
-      let resp = await fetch('api/users/all');
-      let users = await resp.json();
+      let resp = await axios.get('api/users/all');
+      let users = await resp.data;
       console.log(users);
       this.result = JSON.stringify(users, null, 4);
     },
     async onClickAddUserBtn() {
       const user = this.$auth.user;
       console.log(user);
-      const postBody = {
-        method: 'POST',
-        body: JSON.stringify(user),
-        headers: {
-          'Content-Type': 'application/json',
-        }
-      };
-      const resp = await fetch('/api/users', postBody);
-      const savedUser = await resp.json();
+      const resp = await axios.post('/api/users', user);
+      const savedUser = await resp.data;
       console.log(savedUser);
       this.result = JSON.stringify(savedUser, null, 4);
     }
