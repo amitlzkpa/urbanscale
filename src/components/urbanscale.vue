@@ -23,13 +23,14 @@ export default {
     },
     async onClickPostBtn() {
       const user = this.$auth.user;
+      console.log(user);
       const postBody = {
         method: 'POST',
         body: JSON.stringify(user),
         headers: {
           'Content-Type': 'application/json',
         }
-      }
+      };
       const resp = await fetch('/api/users', postBody);
       const conf = await resp.json();
       console.log(conf);

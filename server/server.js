@@ -3,8 +3,6 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 
-const routes = require('./routes');
-
 const DIR = 'dist';
 const PORT = process.env.PORT || 8080;
 
@@ -28,7 +26,7 @@ app.get('/api/auth0-secrets', function(req, res) {
   res.json(creds);
 });
 
-app.use('/api/users', routes.user);
+app.use('/api', require('./routes/api'));
 
 app.listen(PORT, () => {
   console.log(`listening on ${PORT}`);
