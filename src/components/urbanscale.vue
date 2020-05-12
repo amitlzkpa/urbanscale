@@ -6,22 +6,61 @@
     </div>
     <img :src="'/imgs/img.png'" />
     <br />
-    <button @click="onClickGetBtn">TestGet</button>
+    <button @click="onClickGetAllBtn">TestGetAll</button>
     <br />
-    <button @click="onClickPostBtn">TestPost</button>
+    <input type="text" v-model="getId" />
+    <button @click="onClickGetByIdBtn">TestGetById</button>
+    <br />
+    <input type="text" v-model="getEmail" />
+    <button @click="onClickGetByEmailBtn">TestGetByEmail</button>
+    <br />
+    <input type="text" v-model="getUsername" />
+    <button @click="onClickGetByUsernameBtn">TestGetByUsername</button>
+    <br />
+    <button @click="onClickAddUserBtn">TestAddUser</button>
+    <div>
+      {{ result }}
+    </div>
   </div>
 </template>
 
 <script>
 export default {
   name: 'urbanscale',
+  data() {
+    return {
+      getId: null,
+      getEmail: null,
+      getUsername: null,
+      result: null
+    }
+  },
   methods: {
-    async onClickGetBtn() {
-      let resp = await fetch('api/users/abc');
-      let txt = await resp.text();
-      console.log(txt);
+    async onClickGetByIdBtn() {
+      let resp = await fetch(`api/users/id/${this.getId}`);
+      let user = await resp.json();
+      console.log(user);
+      this.result = JSON.stringify(user, null, 4);
     },
-    async onClickPostBtn() {
+    async onClickGetByEmailBtn() {
+      let resp = await fetch(`api/users/email/${this.getEmail}`);
+      let user = await resp.json();
+      console.log(user);
+      this.result = JSON.stringify(user, null, 4);
+    },
+    async onClickGetByUsernameBtn() {
+      let resp = await fetch(`api/users/username/${this.getUsername}`);
+      let user = await resp.json();
+      console.log(user);
+      this.result = JSON.stringify(user, null, 4);
+    },
+    async onClickGetAllBtn() {
+      let resp = await fetch('api/users/all');
+      let users = await resp.json();
+      console.log(users);
+      this.result = JSON.stringify(users, null, 4);
+    },
+    async onClickAddUserBtn() {
       const user = this.$auth.user;
       console.log(user);
       const postBody = {
@@ -32,8 +71,9 @@ export default {
         }
       };
       const resp = await fetch('/api/users', postBody);
-      const conf = await resp.json();
-      console.log(conf);
+      const savedUser = await resp.json();
+      console.log(savedUser);
+      this.result = JSON.stringify(savedUser, null, 4);
     }
   }
 }
