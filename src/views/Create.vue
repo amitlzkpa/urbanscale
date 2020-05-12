@@ -9,7 +9,7 @@
     <textarea v-model="description" />
     <br />
     <label>Files: </label>
-    <input type="file" ref="files" multiple />
+    <input type="file" ref="file" />
     <br />
     <button @click="onSubmit" >Submit</button>
   </div>
@@ -24,26 +24,28 @@ export default {
     return {
       name: null,
       description: null,
-      files: [],
+      file: null,
     }
   },
   methods: {
     async onSubmit() {
       const user = this.$auth.user;
-      const formData = new FormData();
-      const files = this.$refs.files.files;
-      Object.keys(files).forEach(f => { formData.append(`file-${f}`, files[f]); } );
-      // Array.from(formData.entries()).forEach(i => console.log(i) );
       const data = {
         user: user,
         name: this.name,
-        description: this.description,
-        files: formData
+        description: this.description
       };
-      console.log(data);
       const resp = await axios.post('/api/group', data);
       const savedGroup = await resp.data;
       console.log(savedGroup);
+      
+      const formData = new FormData();
+      const file = this.$refs.file.files[0];
+      formData.append('file', file);
+      const imgUpResp = await axios.post(`/api/group/${savedGroup._id}/image/upload`, formData);
+      const savedImage = await imgUpResp.data;
+      console.log(savedImage);
+      
     }
   }
 }
