@@ -16,6 +16,8 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
   name: 'create',
   data() {
@@ -33,16 +35,9 @@ export default {
         name: this.name,
         description: this.description
       };
-      const postBody = {
-        method: 'POST',
-        body: JSON.stringify(data),
-        headers: {
-          'Content-Type': 'application/json',
-        }
-      };
-      const resp = await fetch('/api/listing', postBody);
-      const savedListing = await resp.json();
-      console.log(savedListing);
+      const resp = await axios.post('/api/group', data);
+      const savedGroup = await resp.data;
+      console.log(savedGroup);
     }
   }
 }
