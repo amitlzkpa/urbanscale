@@ -3,7 +3,12 @@
     <h1>About</h1>
     <p>
       UrbanScale is a decentralized application to help you connect with your local government.
+      <br />
+      It promotes research into the financial health of our municipal institutions by incentivising research and investment in our public institutions.
     </p>
+
+    <hr />
+    
     <p>
       Municipal bonds are debt obligations issued by public entities that use the loans to fund public projects such as the construction of schools, hospitals, and highways.
       <br />
@@ -21,6 +26,11 @@
     </p>
     <p>
       Financial economists who study bond markets have widely attributed this to the lack of reliable data on trade prices in the bond market as compared to the abundance of publicly available information on stock trades.
+      <br />
+      The Open, Public, Electronic and Necessary (OPEN) Government Data Act provides a sweeping, government-wide mandate for federal agencies to publish all their information as open data.
+    </p>
+    <p>
+      UrbanScale is a platform for analysts to discuss and invest in such bonds, powered by decentralized financing.
     </p>
   </div>
 </template>
