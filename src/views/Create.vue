@@ -35,16 +35,16 @@ export default {
         name: this.name,
         description: this.description
       };
-      const resp = await axios.post('/api/group', data);
+      const resp = await axios.post('/api/listing', data);
       const savedGroup = await resp.data;
       console.log(savedGroup);
       
-      const formData = new FormData();
-      const file = this.$refs.file.files[0];
-      formData.append('file', file);
-      const imgUpResp = await axios.post(`/api/group/${savedGroup._id}/image/upload`, formData);
-      const savedImage = await imgUpResp.data;
-      console.log(savedImage);
+      // const formData = new FormData();
+      // const file = this.$refs.file.files[0];
+      // formData.append('file', file);
+      // const imgUpResp = await axios.post(`/api/listing/${savedGroup._id}/image/upload`, formData);
+      // const savedImage = await imgUpResp.data;
+      // console.log(savedImage);
       
     }
   }

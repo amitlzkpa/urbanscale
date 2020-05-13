@@ -1,6 +1,6 @@
 const router = require('express').Router();
 
 router.use('/users', require('./user'));
-router.use('/group', require('./group'));
+router.use('/listing', require('./listing'));
 
 module.exports = router;
