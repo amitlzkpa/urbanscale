@@ -9,7 +9,7 @@ const PORT = process.env.PORT || 8080;
 const AUTH0_DOMAIN = process.env.AUTH0_DOMAIN;
 const AUTH0_CLIENT_ID = process.env.AUTH0_CLIENT_ID;
 
-const mongoURI = `mongodb+srv://${process.env.MONGO_ID}:${process.env.MONGO_PWD}@cluster0-ju8ei.mongodb.net/test?retryWrites=true&w=majority`;
+const mongoURI = process.env.MONGO_URL;
 mongoose.connect(mongoURI, { useNewUrlParser: true });
 
 const app = express();
