@@ -4,6 +4,8 @@ import Home from '@/views/Home.vue';
 import About from '@/views/About.vue';
 import Create from '@/views/Create.vue';
 
+import { authGuard } from "@/auth/authGuard";
+
 Vue.use(VueRouter);
 
 export default new VueRouter({
@@ -18,7 +20,8 @@ export default new VueRouter({
     {
       path: '/create',
       name: 'create',
-      component: Create
+      component: Create,
+      beforeEnter: authGuard
     },
     {
       path: '/about',
