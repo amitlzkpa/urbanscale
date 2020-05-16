@@ -1,16 +1,16 @@
 <template>
   <div>
-    <urbanscale />
+    <Landing />
   </div>
 </template>
 
 <script>
-import urbanscale from '@/components/urbanscale.vue';
+import Landing from '@/components/Landing.vue';
 
 export default {
   name: 'home',
   components: {
-    urbanscale
+    Landing
   }
 }
 </script>

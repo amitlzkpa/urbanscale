@@ -29,7 +29,7 @@
 import axios from 'axios';
 
 export default {
-  name: 'urbanscale',
+  name: 'Landing',
   data() {
     return {
       getId: null,
