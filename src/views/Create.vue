@@ -1,22 +1,58 @@
 <template>
   <div>
-    <h1>Create</h1>
-    <label>Name: </label>
-    <input type="text" v-model="name" />
-    <br />
-    <label>Description: </label>
-    <br />
-    <textarea v-model="description" />
-    <br />
-    <label>Files: </label>
-    <input type="file" ref="file" />
-    <br />
-    <button @click="onSubmit" >Submit</button>
+
+    <section>
+      <b-field label="Name">
+        <b-input v-model="name"></b-input>
+      </b-field>
+
+      <b-field label="Description">
+        <b-input maxlength="400" type="textarea" v-model="description"></b-input>
+      </b-field>
+    </section>
+
+
+
+    <div class="columns">
+
+      <div class="column is-narrow">
+        <b-field label="File">
+        </b-field>
+      </div>
+      
+      <div class="column">
+        <b-field class="file">
+          <b-upload v-model="file">
+            <a class="button is-primary">
+              <span>Click to upload</span>
+            </a>
+          </b-upload>
+          <span class="file-name" v-if="file">
+            {{ file.name }}
+          </span>
+        </b-field>
+      </div>
+
+    </div>
+
+
+
+    <div class="buttons">
+      <b-button type="is-primary" @click="onSubmit" expanded>Submit</b-button>
+    </div>
+
+
+
+
+
+
   </div>
 </template>
 
 <script>
 import axios from 'axios';
+
+
 
 export default {
   name: 'create',
@@ -39,12 +75,12 @@ export default {
       const savedGroup = await resp.data;
       console.log(savedGroup);
       
-      // const formData = new FormData();
-      // const file = this.$refs.file.files[0];
-      // formData.append('file', file);
-      // const imgUpResp = await axios.post(`/api/listing/${savedGroup._id}/image/upload`, formData);
-      // const savedImage = await imgUpResp.data;
-      // console.log(savedImage);
+      const formData = new FormData();
+      const file = this.file;
+      formData.append('file', file);
+      const imgUpResp = await axios.post(`/api/listing/${savedGroup._id}/image/upload`, formData);
+      const savedImage = await imgUpResp.data;
+      console.log(savedImage);
       
     }
   }
