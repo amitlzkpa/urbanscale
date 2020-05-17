@@ -50,9 +50,10 @@
 </template>
 
 <script>
-// import axios from 'axios';
+import axios from 'axios';
+import Web3 from 'web3';
 
-
+let web3;
 
 export default {
   name: 'create',
@@ -63,12 +64,42 @@ export default {
       file: null,
     }
   },
+  created() {
+    if(window.ethereum) {
+      web3 = new Web3(window.web3.currentProvider);
+      // web3 = new Web3(window.ethereum);
+      // window.web3 = web3;
+      // window.ethereum.enable();
+    }
+  },
   methods: {
     async onSubmit() {
 
       console.log('deployy ahoyyy.....');
+
+      let abiRes = await axios.get("/contracts/FundToken.abi");
+      let abiDefinition = abiRes.data;
       
-      
+      let byteCodeRes = await axios.get("/contracts/FundToken.bytecode");
+      let byteCode = byteCodeRes.data.object;
+
+      let Contract = new web3.eth.Contract(abiDefinition);
+
+      let tx = await Contract.deploy({
+        arguments: ["FundToken", "FTC", 1000],
+        data: byteCode,
+      });
+
+      let acc = (await web3.eth.getAccounts())[0];
+
+      let q = await tx.send({
+        from: acc,
+        gas: 3000000,
+        gasPrice: 8000000000
+      });
+      console.log(q);
+
+
       // const user = this.$auth.user;
       // const data = {
       //   user: user,
