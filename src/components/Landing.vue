@@ -1,6 +1,5 @@
 <template>
   <div>
-    <h1>UrbanScale</h1>
     <div>
       <p>Connect with your local government.</p>
     </div>
@@ -19,6 +18,7 @@
     <input type="text" v-model="getUsername" />
     <button @click="onClickGetByUsernameBtn">TestGetByUsername</button>
     <br />
+    Result:
     <pre><code>
 {{ result }}
     </code></pre>
