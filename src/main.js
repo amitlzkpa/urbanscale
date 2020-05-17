@@ -3,7 +3,12 @@ import App from '@/App.vue';
 import router from '@/router';
 import axios from 'axios';
 
+import Buefy from 'buefy'
+import 'buefy/dist/buefy.css'
+
 import { Auth0Plugin } from "./auth";
+
+Vue.use(Buefy)
 
 async function main() {
 

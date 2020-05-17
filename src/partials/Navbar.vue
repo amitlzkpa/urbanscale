@@ -1,15 +1,54 @@
 <template>
   <div>
-    <router-link to="/">Home</router-link>
-    &nbsp;|&nbsp;
-    <router-link to="/about">About</router-link>
-    &nbsp;|&nbsp;
-    <router-link to="/create">Create</router-link>
-    &nbsp;|&nbsp;
-    <span v-if="!$auth.loading">
-      <a v-if="!$auth.isAuthenticated" @click="login" href="#!">Log in</a>
-      <a v-if="$auth.isAuthenticated" @click="logout" href="#!">Log out({{ $auth.user.name }})</a>
-    </span>
+
+
+    <b-navbar>
+      <template slot="brand">
+        <b-navbar-item tag="router-link" :to="{ path: '/' }">
+          <img src="/imgs/img(circle)_inverted.png" >
+          <span class="is-size-5 has-text-weight-semibold">UrbanScale</span>
+        </b-navbar-item>
+      </template>
+
+      <template slot="start">
+        <b-navbar-item tag="router-link" :to="{ path: '/about' }">
+          About
+        </b-navbar-item>
+        <b-navbar-item tag="router-link" :to="{ path: '/create' }">
+          Create
+        </b-navbar-item>
+      </template>
+
+      <template slot="end">
+
+        <b-navbar-item tag="div" v-if="!$auth.isAuthenticated">
+          <div class="buttons">
+            <a class="button is-primary"
+              @click="login"
+            >
+              <strong>Sign up</strong>
+            </a>
+            <a class="button is-light"
+              @click="login"
+            >
+              Log in
+            </a>
+          </div>
+        </b-navbar-item>
+        
+        <b-navbar-dropdown label="Account" v-if="$auth.isAuthenticated">
+          <b-navbar-item
+            tag="router-link"
+            :to="{ path: '/profile' }"
+          >
+            {{ $auth.user.name }}
+          </b-navbar-item>
+          <b-navbar-item @click="logout">Logout</b-navbar-item>
+        </b-navbar-dropdown>
+
+      </template>
+    </b-navbar>
+
   </div>
 </template>
 

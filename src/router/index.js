@@ -2,6 +2,7 @@ import Vue from 'vue';
 import VueRouter from 'vue-router';
 import Home from '@/views/Home.vue';
 import About from '@/views/About.vue';
+import Profile from '@/views/Profile.vue';
 import Create from '@/views/Create.vue';
 
 import { authGuard } from "@/auth/authGuard";
@@ -27,6 +28,11 @@ export default new VueRouter({
       path: '/about',
       name: 'about',
       component: About
+    },
+    {
+      path: '/profile',
+      name: 'profile',
+      component: Profile
     }
   ]
 });
