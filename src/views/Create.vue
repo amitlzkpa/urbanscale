@@ -2,6 +2,18 @@
   <div>
 
     <section>
+
+
+      <b-field label="EMMA Id">
+        <b-input v-model="emmaId"></b-input>
+      </b-field>
+
+      <div class="buttons">
+        <b-button type="is-primary" @click="onUpdate" expanded>Update</b-button>
+      </div>
+
+
+
       <b-field label="Name">
         <b-input v-model="name"></b-input>
       </b-field>
@@ -59,6 +71,7 @@ export default {
   name: 'create',
   data() {
     return {
+      emmaId: null,
       name: null,
       description: null,
       file: null,
@@ -73,9 +86,16 @@ export default {
     }
   },
   methods: {
-    async onSubmit() {
+    async onUpdate() {
+      let url = `https://emma.msrb.org/Security/Details/${this.emmaId}`;
+      console.log(url);
+      
+      let data = await axios.get(url)
+      console.log(data.data);
 
-      console.log('deployy ahoyyy.....');
+
+    },
+    async onSubmit() {
 
       let abiRes = await axios.get("/contracts/FundToken.abi");
       let abiDefinition = abiRes.data;

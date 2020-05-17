@@ -3,6 +3,8 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
+const cors = require('cors');
+
 
 const DIR = 'dist';
 const PORT = process.env.PORT || 8080;
@@ -19,6 +21,12 @@ app.use(express.static(DIR));
 app.use(cookieParser());
 app.use(bodyParser.json({ limit: '500mb' }));
 app.use(bodyParser.urlencoded({ limit: '500mb', extended: true }));
+
+// const corsOptions = {
+//   origin: 'https://emma.msrb.org'
+// };
+// app.use(cors(corsOptions));
+app.use(cors());
 
 app.get('/api/auth0-secrets', function(req, res) {
   const creds = {
