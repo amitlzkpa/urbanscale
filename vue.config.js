@@ -9,9 +9,6 @@ module.exports = {
         target: `http://localhost:${PORT}/`,
         logLevel: "debug"
       }
-    },
-    headers: {
-      "Access-Control-Allow-Origin": "*"
     }
   }
 };
