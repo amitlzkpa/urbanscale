@@ -50,7 +50,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+// import axios from 'axios';
 
 
 
@@ -65,22 +65,26 @@ export default {
   },
   methods: {
     async onSubmit() {
-      const user = this.$auth.user;
-      const data = {
-        user: user,
-        name: this.name,
-        description: this.description
-      };
-      const resp = await axios.post('/api/listing', data);
-      const savedGroup = await resp.data;
-      console.log(savedGroup);
+
+      console.log('deployy ahoyyy.....');
       
-      const formData = new FormData();
-      const file = this.file;
-      formData.append('file', file);
-      const imgUpResp = await axios.post(`/api/listing/${savedGroup._id}/image/upload`, formData);
-      const savedImage = await imgUpResp.data;
-      console.log(savedImage);
+      
+      // const user = this.$auth.user;
+      // const data = {
+      //   user: user,
+      //   name: this.name,
+      //   description: this.description
+      // };
+      // const resp = await axios.post('/api/listing', data);
+      // const savedGroup = await resp.data;
+      // console.log(savedGroup);
+      
+      // const formData = new FormData();
+      // const file = this.file;
+      // formData.append('file', file);
+      // const imgUpResp = await axios.post(`/api/listing/${savedGroup._id}/image/upload`, formData);
+      // const savedImage = await imgUpResp.data;
+      // console.log(savedImage);
       
     }
   }

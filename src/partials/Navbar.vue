@@ -5,7 +5,7 @@
     <b-navbar>
       <template slot="brand">
         <b-navbar-item tag="router-link" :to="{ path: '/' }">
-          <img src="/imgs/img(circle)_inverted.png" >
+          <img src="/imgs/img(circle)_inverted.png" id="logo-img">
           <span class="is-size-5 has-text-weight-semibold">UrbanScale</span>
         </b-navbar-item>
       </template>
@@ -68,6 +68,10 @@ export default {
 }
 </script>
 
-<style>
+<style scope>
+
+#logo-img {
+  margin-right: 6px;
+}
 
 </style>
