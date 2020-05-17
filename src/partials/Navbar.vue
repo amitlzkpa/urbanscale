@@ -36,12 +36,12 @@
           </div>
         </b-navbar-item>
         
-        <b-navbar-dropdown label="Account" v-if="$auth.isAuthenticated">
+        <b-navbar-dropdown :label="$auth.user.name" v-if="$auth.isAuthenticated">
           <b-navbar-item
             tag="router-link"
             :to="{ path: '/profile' }"
           >
-            {{ $auth.user.name }}
+            Profile
           </b-navbar-item>
           <b-navbar-item @click="logout">Logout</b-navbar-item>
         </b-navbar-dropdown>

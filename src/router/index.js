@@ -9,7 +9,8 @@ import { authGuard } from "@/auth/authGuard";
 
 Vue.use(VueRouter);
 
-export default new VueRouter({
+
+const router =  new VueRouter({
   mode: 'history',
   base: '/',
   routes: [
@@ -36,3 +37,15 @@ export default new VueRouter({
     }
   ]
 });
+
+
+// This callback runs before every route change, including on page load.
+router.beforeEach((to, from, next) => {
+  
+  document.title = "UrbanScale";
+
+  next();
+});
+
+
+export default router;
