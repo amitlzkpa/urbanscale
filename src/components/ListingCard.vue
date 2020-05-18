@@ -68,7 +68,7 @@
                 <div class="column">
                   <span class="is-size-2 has-text-weight-bold">
                     <b-tooltip label="Price per token" :delay="200">
-                      ${{ (listing.principal / listing.tokenSupply).toFixed(0) }} 
+                      ${{ Math.ceil(listing.principal / listing.tokenSupply) }} 
                     </b-tooltip>
                   </span> /token
                 </div>

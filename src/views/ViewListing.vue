@@ -27,6 +27,7 @@
         <b-numberinput
           v-model="tokensToBuy"
           min=1
+          :step="Math.ceil(listing.tokenSupply/1000)"
           expanded
           controlsPosition="compact"
         />
@@ -35,13 +36,26 @@
 
       <div class="column is-narrow">
 
-        <b-button @click="buyToken">
+        <b-button @click="buyTokenThroughMetaMask">
           <b-icon
             pack="fas"
             icon="shopping-cart"
             size="is-small">
           </b-icon>
           Buy
+        </b-button>
+
+      </div>
+
+      <div class="column is-narrow">
+
+        <b-button @click="buyTokenThroughPortis">
+          <b-icon
+            pack="fas"
+            icon="plus"
+            size="is-small">
+          </b-icon>
+          Portis
         </b-button>
 
       </div>
@@ -58,10 +72,7 @@ import Web3 from 'web3';
 
 import ListingCard from '@/components/ListingCard.vue';
 
-const portis = new Portis('c9972761-699b-441e-a522-56b5bc729b65', 'mainnet');
-const portisWeb3 = new Web3(portis.provider);
-
-let web3;
+let abiDefinition;
 
 export default {
   name: 'ViewListing',
@@ -71,7 +82,6 @@ export default {
   data() {
     return {
       listing: null,
-      contract: null,
       tokensToBuy: 0,
       ready: false
     }
@@ -79,29 +89,34 @@ export default {
   async created() {
     let resp = await axios.get(`/api/listing/cusipNo/${this.$route.params.cusipNo}`);
     this.listing = resp.data;
+    let abiRes = await axios.get("/contracts/FundToken.abi");
+    abiDefinition = abiRes.data;
     this.ready = true;
-    console.log(portisWeb3);
   },
   methods: {
-    async buyToken() {
+    async buyTokenThroughMetaMask() {
 
       try {
+
+        await window.ethereum.enable();
+        let web3 = new Web3(window.web3.currentProvider);
+        let contract = new web3.eth.Contract(abiDefinition, this.listing.contractAddress);
 
         let rate = this.listing.principal / this.listing.tokenSupply;
         let tokens = Math.floor(this.tokensToBuy);
         let total = rate * tokens;
+        let sendVal = Math.ceil(total);
 
         let acc = (await web3.eth.getAccounts())[0];
-        let send = Math.ceil(total * 1.1);
 
         let options = {
           from: acc,
-          value: send
+          value: sendVal
         };
 
         this.$buefy.toast.open('Submitting your request. Please stay on this page.');
         
-        let tx = await this.contract.methods.buy(tokens).send(options);
+        let tx = await contract.methods.buy(tokens).send(options);
         console.log(tx);
         
         this.$buefy.toast.open({
@@ -114,6 +129,22 @@ export default {
       }
 
       
+    },
+    async buyTokenThroughPortis() {
+      
+
+        let portis = new Portis('c9972761-699b-441e-a522-56b5bc729b65', 'ropsten');
+        let portisWeb3 = new Web3(portis.provider);
+        console.log(portisWeb3);
+
+        let rate = this.listing.principal / this.listing.tokenSupply;
+        let tokens = Math.floor(this.tokensToBuy);
+        let total = rate * tokens;
+        console.log(total);
+        
+        let contract = new portisWeb3.eth.Contract(abiDefinition, this.listing.contractAddress);
+        console.log(contract);
+
     }
   }
 }
