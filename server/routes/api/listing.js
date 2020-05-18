@@ -31,6 +31,7 @@ router.post('/', async (req, res) => {
   let listing = await ((new Listing({
     createdBy: user,
     name: data.name,
+    issuer: data.issuer,
     cusipNo: data.cusipNo,
     emmaId: data.emmaId,
     maturityDate: new Date(data.maturityDate),

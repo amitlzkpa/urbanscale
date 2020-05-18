@@ -86,7 +86,7 @@
         
         <b-field label="Maturity">
         </b-field>
-        <b-datepicker v-model="maturity_date" 
+        <b-datepicker v-model="maturityDate" 
             inline 
             :unselectable-days-of-week="[0, 6]">
         </b-datepicker>
@@ -161,7 +161,7 @@ export default {
       location: null,
       file: null,
       emmaUrl: null,
-      maturity_date: null,
+      maturityDate: null,
       principal: 0,
       coupon: 0,
       tokenSupply: 0
@@ -201,14 +201,14 @@ export default {
       //               uint256 _coupon,
       //               uint256 totalSupply)
 
-      let matDt_unix = new Date(this.maturity_date).getTime() / 1000;
+      let maturityDate_unix = new Date(this.maturityDate).getTime() / 1000;
       let coupon_int = parseInt(this.coupon * 1000000);
 
       let args = [
         this.name,
         this.cusipNo,
         this.emmaId,
-        matDt_unix,
+        maturityDate_unix,
         this.principal,
         coupon_int,
         this.tokenSupply
@@ -229,9 +229,10 @@ export default {
       let data = {
         user: user,
         name: this.name,
+        issuer: this.issuer,
         cusipNo: this.cusipNo,
         emmaId: this.emmaId,
-        maturityDate: this.maturity_date,
+        maturityDate: this.maturityDate,
         principal: this.principal,
         coupon: coupon_int,
         tokenSupply: this.tokenSupply,

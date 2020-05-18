@@ -11,6 +11,11 @@ const ListingSchema = new mongoose.Schema({
     index: true,
     default: ""
   },
+  issuer: {
+    type: String,
+    index: true,
+    default: ""
+  },
   cusipNo: {
     type: String,
     index: true,
