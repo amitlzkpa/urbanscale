@@ -132,18 +132,37 @@ export default {
     },
     async buyTokenThroughPortis() {
       
+      try {
 
         let portis = new Portis('c9972761-699b-441e-a522-56b5bc729b65', 'ropsten');
         let portisWeb3 = new Web3(portis.provider);
-        console.log(portisWeb3);
+        let contract = new portisWeb3.eth.Contract(abiDefinition, this.listing.contractAddress);
 
         let rate = this.listing.principal / this.listing.tokenSupply;
         let tokens = Math.floor(this.tokensToBuy);
         let total = rate * tokens;
-        console.log(total);
+        let sendVal = Math.ceil(total);
         
-        let contract = new portisWeb3.eth.Contract(abiDefinition, this.listing.contractAddress);
-        console.log(contract);
+        let acc = (await portisWeb3.eth.getAccounts())[0];
+
+        let options = {
+          from: acc,
+          value: sendVal
+        };
+
+        this.$buefy.toast.open('Submitting your request. Please stay on this page.');
+        
+        let tx = await contract.methods.buy(tokens).send(options);
+        console.log(tx);
+        
+        this.$buefy.toast.open({
+          message: 'Successflly bought!',
+          type: 'is-success'
+        });
+        
+      } catch(exc) {
+        console.log(exc);
+      }
 
     }
   }
