@@ -1,11 +1,10 @@
 <template>
   <div>
-    <br /><br />
     
     <p v-for="listing in listings" :key="listing.cusipNo">
-      <ListingCard 
-        :listing="listing"
-      />
+      <router-link :to="{ name: 'view', params: { cusipNo: listing.cusipNo } }">
+        <ListingCard :listing="listing" />
+      </router-link>
       <br />
     </p>
     

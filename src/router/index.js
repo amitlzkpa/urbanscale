@@ -28,7 +28,7 @@ const router =  new VueRouter({
       beforeEnter: authGuard
     },
     {
-      path: '/view',
+      path: '/view/:cusipNo',
       name: 'view',
       component: ViewListing,
       beforeEnter: authGuard

@@ -46,6 +46,12 @@ router.post('/', async (req, res) => {
 });
 
 
+router.get('/cusipNo/:cusipNo', async (req, res) => {
+  let listing = await Listing.findOne({cusipNo: req.params.cusipNo});
+  res.json(listing);
+});
+
+
 router.get('/all', async (req, res) => {
   let listings = await Listing.find({});
   res.json(listings);
