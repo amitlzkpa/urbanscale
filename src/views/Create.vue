@@ -200,6 +200,7 @@ export default {
       //               uint256 totalSupply)
 
       let matDt_unix = new Date(this.maturity_date).getTime() / 1000;
+      let coupon_int = parseInt(this.coupon * 1000000);
 
       let args = [
         this.name,
@@ -207,7 +208,7 @@ export default {
         this.emmaId,
         matDt_unix,
         this.principal,
-        this.coupon,
+        coupon_int,
         this.tokenSupply
       ];
       
@@ -216,8 +217,11 @@ export default {
         data: byteCode,
       });
 
-      let contract = await tx.send();
+      let acc = (await web3.eth.getAccounts())[0];
 
+      let contract = await tx.send({from: acc});
+
+      this.$buefy.toast.open('Submitting your request. Please stay on this page.');
 
       let user = this.$auth.user;
       let data = {
@@ -227,16 +231,21 @@ export default {
         emmaId: this.emmaId,
         maturityDate: this.maturity_date,
         principal: this.principal,
-        coupon: this.coupon,
+        coupon: coupon_int,
         tokenSupply: this.tokenSupply,
         description: this.description,
         location: this.location,
-        contract: contract
+        contractAddress: contract._address
       };
       const resp = await axios.post('/api/listing', data);
       const savedListing = await resp.data;
       console.log(savedListing);
       
+      this.$buefy.toast.open({
+          message: 'Successflly submitted!',
+          type: 'is-success'
+      });
+
       // const formData = new FormData();
       // const file = this.file;
       // formData.append('file', file);
