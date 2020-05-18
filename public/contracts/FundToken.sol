@@ -15,16 +15,31 @@ contract FundToken {
     mapping(address => mapping (address => uint256)) allowed;
     
     string public name = "";
-    string public symbol = "";
+    string public cusipNo = "";
+    string public emmaId = "";
+    uint256 public maturityDate;
+    uint256 public coupon;
+    uint256 public principal;
+    
     uint256 totalSupply_;
 
     using SafeMath for uint256;
 
 
-   constructor (string memory _name, string memory _symbol, uint256 total) public {
+   constructor (string memory _name,
+                string memory _cusipNo,
+                string memory _emmaId,
+                uint256 _maturityDate,
+                uint256 _principal,
+                uint256 _coupon,
+                uint256 totalSupply) public {
     name = _name;
-    symbol = _symbol;
-  totalSupply_ = total;
+    cusipNo = _cusipNo;
+    emmaId = _emmaId;
+    maturityDate = _maturityDate;
+    principal = _principal;
+    coupon = _coupon;
+    totalSupply_ = totalSupply;
   balances[msg.sender] = totalSupply_;
     }  
 
