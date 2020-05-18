@@ -3,7 +3,8 @@ import VueRouter from 'vue-router';
 import Home from '@/views/Home.vue';
 import About from '@/views/About.vue';
 import Profile from '@/views/Profile.vue';
-import Create from '@/views/Create.vue';
+import CreateListing from '@/views/CreateListing.vue';
+import ViewListing from '@/views/ViewListing.vue';
 
 import { authGuard } from "@/auth/authGuard";
 
@@ -22,7 +23,13 @@ const router =  new VueRouter({
     {
       path: '/create',
       name: 'create',
-      component: Create,
+      component: CreateListing,
+      beforeEnter: authGuard
+    },
+    {
+      path: '/view',
+      name: 'view',
+      component: ViewListing,
       beforeEnter: authGuard
     },
     {

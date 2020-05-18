@@ -136,7 +136,8 @@
     </div>
 
 
-
+    <br />
+    <br />
 
 
   </div>
@@ -149,7 +150,7 @@ import Web3 from 'web3';
 let web3;
 
 export default {
-  name: 'create',
+  name: 'CreateListing',
   data() {
     return {
       emmaId: null,
