@@ -87,8 +87,8 @@
         <b-field label="Maturity">
         </b-field>
         <b-datepicker v-model="maturityDate" 
-            inline 
-            :unselectable-days-of-week="[0, 6]">
+          inline 
+          :unselectable-days-of-week="[0, 6]">
         </b-datepicker>
 
       </div>
@@ -221,9 +221,10 @@ export default {
 
       let acc = (await web3.eth.getAccounts())[0];
 
+      this.$buefy.toast.open('Submitting your request. Please stay on this page.');
+      
       let contract = await tx.send({from: acc});
 
-      this.$buefy.toast.open('Submitting your request. Please stay on this page.');
 
       let user = this.$auth.user;
       let data = {
@@ -245,8 +246,8 @@ export default {
       console.log(savedListing);
       
       this.$buefy.toast.open({
-          message: 'Successflly submitted!',
-          type: 'is-success'
+        message: 'Successflly submitted!',
+        type: 'is-success'
       });
 
       // const formData = new FormData();
