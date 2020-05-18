@@ -17,6 +17,9 @@
         <b-navbar-item tag="router-link" :to="{ path: '/create' }">
           Create
         </b-navbar-item>
+        <b-navbar-item tag="router-link" :to="{ path: '/listings' }">
+          Listings
+        </b-navbar-item>
       </template>
 
       <template slot="end">

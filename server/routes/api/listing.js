@@ -14,8 +14,16 @@ const storage = multer.diskStorage({
     let fExt = split[split.length-1];
     cb(null, `${fName}-${Date.now()}.${fExt}`)
   }
-})
+});
+
 const upload = multer({ storage: storage });
+
+router.post('/:id/image/upload', upload.single('file'), async (req, res) => {
+  const file = req.file;
+  console.log(file.filename);
+  return res.json(file.filename);
+});
+
 
 router.post('/', async (req, res) => {
   const data = req.body;
@@ -36,10 +44,11 @@ router.post('/', async (req, res) => {
   return res.json(listing);
 });
 
-router.post('/:id/image/upload', upload.single('file'), async (req, res) => {
-  const file = req.file;
-  console.log(file.filename);
-  return res.json(file.filename);
+
+router.get('/all', async (req, res) => {
+  let listings = await Listing.find({});
+  res.json(listings);
 });
+
 
 module.exports = router;
