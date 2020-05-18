@@ -75,6 +75,11 @@
           </b-field>
         </b-field>
 
+        
+        <b-field label="Location">
+          <b-input maxlength="100" type="textarea" v-model="location"></b-input>
+        </b-field>
+
       </div>
 
       <div class="column is-narrow">
@@ -152,6 +157,7 @@ export default {
       name: null,
       issuer: null,
       description: null,
+      location: null,
       file: null,
       emmaUrl: null,
       maturity_date: null,
@@ -173,7 +179,6 @@ export default {
       
       // deploy contract
       // get contract details
-      // create a new pool
       // send user contract and pool data to backend
 
       let abiRes = await axios.get("/contracts/FundToken.abi");
@@ -211,25 +216,26 @@ export default {
         data: byteCode,
       });
 
-      let acc = (await web3.eth.getAccounts())[0];
-
-      let q = await tx.send({
-        from: acc,
-        gas: 3000000,
-        gasPrice: 8000000000
-      });
-      console.log(q);
+      let contract = await tx.send();
 
 
-      // const user = this.$auth.user;
-      // const data = {
-      //   user: user,
-      //   name: this.name,
-      //   description: this.description
-      // };
-      // const resp = await axios.post('/api/listing', data);
-      // const savedGroup = await resp.data;
-      // console.log(savedGroup);
+      let user = this.$auth.user;
+      let data = {
+        user: user,
+        name: this.name,
+        cusipNo: this.cusipNo,
+        emmaId: this.emmaId,
+        maturityDate: this.maturity_date,
+        principal: this.principal,
+        coupon: this.coupon,
+        tokenSupply: this.tokenSupply,
+        description: this.description,
+        location: this.location,
+        contract: contract
+      };
+      const resp = await axios.post('/api/listing', data);
+      const savedListing = await resp.data;
+      console.log(savedListing);
       
       // const formData = new FormData();
       // const file = this.file;
