@@ -4,7 +4,7 @@ pragma solidity ^0.6.8;
 contract FundToken {
 
     uint8 public constant decimals = 18;  
-
+    address public deployer;
 
     event Approval(address indexed tokenOwner, address indexed spender, uint tokens);
     event Transfer(address indexed from, address indexed to, uint tokens);
@@ -33,22 +33,32 @@ contract FundToken {
                 uint256 _principal,
                 uint256 _coupon,
                 uint256 totalSupply) public {
-    name = _name;
-    cusipNo = _cusipNo;
-    emmaId = _emmaId;
-    maturityDate = _maturityDate;
-    principal = _principal;
-    coupon = _coupon;
-    totalSupply_ = totalSupply;
-  balances[msg.sender] = totalSupply_;
+        name = _name;
+        cusipNo = _cusipNo;
+        emmaId = _emmaId;
+        maturityDate = _maturityDate;
+        principal = _principal;
+        coupon = _coupon;
+        totalSupply_ = totalSupply;
+        balances[msg.sender] = totalSupply_;
+        deployer = msg.sender;
     }  
 
     function totalSupply() public view returns (uint256) {
-  return totalSupply_;
+        return totalSupply_;
     }
     
     function balanceOf(address tokenOwner) public view returns (uint) {
         return balances[tokenOwner];
+    }
+    
+    function buy(uint256 numTokens) public payable returns(bool) {
+        uint256 totalCost = numTokens.mul(principal / totalSupply_);
+        require (totalCost <= msg.value);
+        require(balances[deployer] >= numTokens);
+        balances[deployer] = balances[deployer].sub(numTokens);
+        balances[msg.sender] = balances[msg.sender].add(numTokens);
+        return true;
     }
 
     function transfer(address receiver, uint numTokens) public returns (bool) {
@@ -90,6 +100,12 @@ library SafeMath {
     function add(uint256 a, uint256 b) internal pure returns (uint256) {
       uint256 c = a + b;
       assert(c >= a);
+      return c;
+    }
+    
+    function mul(uint256 a, uint256 b) internal pure returns (uint256) {
+      uint256 c = a * b;
+      assert(c >= a && c >= b);
       return c;
     }
 }
