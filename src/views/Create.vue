@@ -1,40 +1,32 @@
 <template>
   <div>
 
-    <section>
 
 
-      <b-field label="CUSIP No.">
-        <b-input v-model="cusipNo"></b-input>
-      </b-field>
+    <b-field label="CUSIP No.">
+      <b-input v-model="cusipNo"></b-input>
+    </b-field>
 
 
-      <b-field label="EMMA Id">
-      </b-field>
+    <b-field label="EMMA Id">
+    </b-field>
 
-      <b-field>
-        <b-input v-model="emmaId" @change.native="onEmmaUpdate" expanded></b-input>
-        <a class="button" :href="emmaUrl" target="_blank">Check</a>
-      </b-field>
+    <b-field>
+      <b-input v-model="emmaId" @change.native="onEmmaUpdate" expanded></b-input>
+      <a class="button" :href="emmaUrl" target="_blank">Check</a>
+    </b-field>
 
-      <b-field label="Name">
-        <b-input v-model="name"></b-input>
-      </b-field>
+    <b-field label="Name">
+      <b-input v-model="name"></b-input>
+    </b-field>
 
-      <b-field label="Issuer">
-        <b-input v-model="issuer"></b-input>
-      </b-field>
+    <b-field label="Issuer">
+      <b-input v-model="issuer"></b-input>
+    </b-field>
 
-      <b-field label="Description">
-        <b-input maxlength="400" type="textarea" v-model="description"></b-input>
-      </b-field>
-    </section>
+    <div class="columns">
 
-    <section>
-
-      <div class="columns">
-
-        <div class="column">
+      <div class="column">
 
         <b-field label="Prinicpal">
           <b-field>
@@ -44,7 +36,7 @@
             <b-numberinput
               v-model="principal"
               min=0
-              step=1000
+              step=10000
               expanded
               controlsPosition="compact"
             />
@@ -68,48 +60,69 @@
           </b-field>
         </b-field>
 
-        </div>
 
-        <div class="column is-narrow">
-          
-          <b-field label="Maturity">
+        <b-field label="Number of Tokens">
+          <b-field>
+            <p class="control">
+              <button class="button is-static">#</button>
+            </p>
+            <b-numberinput
+              v-model="tokenSupply"
+              min=0
+              expanded
+              controlsPosition="compact"
+            />
           </b-field>
-          <b-datepicker v-model="maturity_date" 
-              inline 
-              :unselectable-days-of-week="[0, 6]">
-          </b-datepicker>
-
-        </div>
-        
-      </div>
-
-
-
-
-      <div class="columns">
-
-        <div class="column is-narrow">
-          <b-field label="File">
-          </b-field>
-        </div>
-        
-        <div class="column">
-          <b-field class="file">
-            <b-upload v-model="file">
-              <a class="button is-primary">
-                <span>Click to upload</span>
-              </a>
-            </b-upload>
-            <span class="file-name" v-if="file">
-              {{ file.name }}
-            </span>
-          </b-field>
-        </div>
+        </b-field>
 
       </div>
 
+      <div class="column is-narrow">
+        
+        <b-field label="Maturity">
+        </b-field>
+        <b-datepicker v-model="maturity_date" 
+            inline 
+            :unselectable-days-of-week="[0, 6]">
+        </b-datepicker>
 
-    </section>
+      </div>
+      
+    </div>
+
+
+
+
+    <div class="columns">
+
+      <div class="column is-narrow">
+        <b-field label="Prospectus:" style="margin-top: 7px">
+        </b-field>
+      </div>
+      
+      <div class="column">
+        <b-field class="file">
+          <b-upload v-model="file">
+            <a class="button is-primary">
+              <span>Click to upload</span>
+            </a>
+          </b-upload>
+          <span class="file-name" v-if="file">
+            {{ file.name }}
+          </span>
+        </b-field>
+      </div>
+
+    </div>
+
+
+
+
+    <b-field label="Description">
+      <b-input maxlength="400" type="textarea" v-model="description"></b-input>
+    </b-field>
+
+
 
     <hr />
 
@@ -142,8 +155,9 @@ export default {
       file: null,
       emmaUrl: null,
       maturity_date: null,
-      principal: null,
-      coupon: null
+      principal: 0,
+      coupon: 0,
+      tokenSupply: 0
     }
   },
   created() {
@@ -153,10 +167,14 @@ export default {
   },
   methods: {
     async onEmmaUpdate() {
-      console.log(this.emmaUrl);
       this.emmaUrl = `https://emma.msrb.org/Security/Details/${this.emmaId}`;
     },
     async onSubmit() {
+      
+      // deploy contract
+      // get contract details
+      // create a new pool
+      // send user contract and pool data to backend
 
       let abiRes = await axios.get("/contracts/FundToken.abi");
       let abiDefinition = abiRes.data;
@@ -166,8 +184,30 @@ export default {
 
       let Contract = new web3.eth.Contract(abiDefinition);
 
+
+      // contract arg order
+      //  constructor (string memory _name,
+      //               string memory _cusipNo,
+      //               string memory _emmaId,
+      //               uint256 _maturityDate,
+      //               uint256 _principal,
+      //               uint256 _coupon,
+      //               uint256 totalSupply)
+
+      let matDt_unix = new Date(this.maturity_date).getTime() / 1000;
+
+      let args = [
+        this.name,
+        this.cusipNo,
+        this.emmaId,
+        matDt_unix,
+        this.principal,
+        this.coupon,
+        this.tokenSupply
+      ];
+      
       let tx = await Contract.deploy({
-        arguments: ["FundToken", "FTC", 1000],
+        arguments: args,
         data: byteCode,
       });
 
