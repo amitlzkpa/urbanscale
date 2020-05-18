@@ -87,8 +87,8 @@
         <b-field label="Maturity">
         </b-field>
         <b-datepicker v-model="maturityDate" 
-            inline 
-            :unselectable-days-of-week="[0, 6]">
+          inline 
+          :unselectable-days-of-week="[0, 6]">
         </b-datepicker>
 
       </div>
