@@ -99,16 +99,24 @@ export default {
         let rate = this.listing.principal / this.listing.tokenSupply;
         let tokens = Math.floor(this.tokensToBuy);
         let total = rate * tokens;
-        console.log(`${tokens} token @ ${rate} => ${total}`);
 
         let acc = (await web3.eth.getAccounts())[0];
+        let send = Math.ceil(total * 1.1);
 
         let options = {
           from: acc,
-          value: Math.ceil(total * 1.1)
+          value: send
         };
+
+        this.$buefy.toast.open('Submitting your request. Please stay on this page.');
+        
         let tx = await this.contract.methods.buy(tokens).send(options);
         console.log(tx);
+        
+        this.$buefy.toast.open({
+          message: 'Successflly bought!',
+          type: 'is-success'
+        });
 
       } catch(exc) {
         console.log(exc);
