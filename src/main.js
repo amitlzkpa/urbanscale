@@ -15,6 +15,9 @@ library.add(fas);
 Vue.component('font-awesome-icon', FontAwesomeIcon);
 Vue.use(Buefy, { defaultIconPack: 'fas' });
 
+Vue.prototype.ETH_TO_USD = 203;
+Vue.prototype.USD_TO_ETH = 1/Vue.prototype.ETH_TO_USD;
+
 async function main() {
 
   let resp = await axios.get('/api/auth0-secrets');

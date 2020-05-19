@@ -121,7 +121,7 @@ export default {
         let rate = this.listing.principal / this.listing.tokenSupply;
         let tokens = Math.floor(this.tokensToBuy);
         let total = rate * tokens;
-        let sendVal = Math.ceil(total);
+        let sendVal = web3.utils.toWei((Math.ceil(total) * this.USD_TO_ETH).toString());
 
         let acc = (await web3.eth.getAccounts())[0];
 
@@ -157,8 +157,8 @@ export default {
         let rate = this.listing.principal / this.listing.tokenSupply;
         let tokens = Math.floor(this.tokensToBuy);
         let total = rate * tokens;
-        let sendVal = Math.ceil(total);
-        
+        let sendVal = portisWeb3.utils.toWei((Math.ceil(total) * this.USD_TO_ETH).toString());
+
         let acc = (await portisWeb3.eth.getAccounts())[0];
 
         let options = {
