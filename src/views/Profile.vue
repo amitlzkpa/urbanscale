@@ -27,6 +27,22 @@
               </p>
             </div>
 
+            <div class="column is-narrow">
+              <b-dropdown aria-role="list" position="is-bottom-left">
+                <button class="button is-text" slot="trigger">
+                  <span>Wallets</span>
+                </button>
+
+                <b-dropdown-item
+                  aria-role="listitem"
+                  v-for="(walletAddress, idx) in walletAddresses" :key="idx">
+                  <a :href="'https://ropsten.etherscan.io/address/' + walletAddress" target="_blank">
+                    {{ walletAddress }}
+                  </a>
+                </b-dropdown-item>
+              </b-dropdown>
+            </div>
+
           </div>
 
       </div>
@@ -50,13 +66,14 @@ export default {
   },
   data() {
     return {
-      purchases: []
+      purchases: [],
+      walletAddresses: []
     }
   },
   async mounted() {
     let resp = await axios.get(`/api/purchase/user/${this.$auth.user.nickname}`);
     this.purchases = resp.data;
-    // console.log(this.purchases);
+    this.walletAddresses = this.purchases.map(p => p.ownerEthAccAddress);
   }
 }
 </script>
