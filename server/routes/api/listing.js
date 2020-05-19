@@ -53,7 +53,7 @@ router.get('/cusipNo/:cusipNo', async (req, res) => {
 
 
 router.get('/all', async (req, res) => {
-  let listings = await Listing.find({});
+  let listings = await Listing.find({}).sort({createdAt: -1});
   res.json(listings);
 });
 

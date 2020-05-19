@@ -1,11 +1,21 @@
 <template>
   <div v-if="ready">
 
-    <div class="columns">
-      <div class="column">
-        <i class="has-text-grey">
-          CUSIP: {{ listing.cusipNo }} / EMMA: {{ listing.emmaId }}
-        </i>
+    <div class="level">
+      <div class="level-left">
+        <div class="level-item">
+          <i class="has-text-grey">
+            CUSIP: {{ listing.cusipNo }} / EMMA: {{ listing.emmaId }}
+          </i>
+        </div>
+      </div>
+
+      <div class="level-right">
+        <div class="level-item">
+          <i class="has-grey-text">
+            <a :href="'https://emma.msrb.org/Security/Details/' + listing.emmaId" target="_blank">Check on EMMA</a>
+          </i>
+        </div>
       </div>
     </div>
     
@@ -32,6 +42,12 @@
           controlsPosition="compact"
         />
 
+      </div>
+
+      <div class="column is-narrow" style="margin-top: 6px;">
+        
+        <b-field :label="'$ ' + Math.ceil(this.tokensToBuy * (this.listing.principal / this.listing.tokenSupply))">
+        </b-field>
       </div>
 
       <div class="column is-narrow">

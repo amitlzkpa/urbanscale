@@ -1,7 +1,7 @@
 <template>
   <div>
 
-
+    <b-loading :is-full-page="true" :active.sync="isLoading" :can-cancel="false"></b-loading>
 
     <b-field label="CUSIP No.">
       <b-input v-model="cusipNo"></b-input>
@@ -87,8 +87,9 @@
         <b-field label="Maturity">
         </b-field>
         <b-datepicker v-model="maturityDate" 
-          inline 
-          :unselectable-days-of-week="[0, 6]">
+          inline
+          :min-date="new Date('01/01/2020')"
+          :max-date="new Date('01/01/2080')">
         </b-datepicker>
 
       </div>
@@ -153,6 +154,7 @@ export default {
   name: 'CreateListing',
   data() {
     return {
+      isLoading: false,
       emmaId: null,
       cusipNo: null,
       name: null,
@@ -221,10 +223,12 @@ export default {
 
       let acc = (await web3.eth.getAccounts())[0];
 
-      this.$buefy.toast.open('Submitting your request. Please stay on this page.');
-      
+      this.isLoading = true;
+
       let contract = await tx.send({from: acc});
 
+      this.$buefy.toast.open('Submitting your request. Please stay on this page.');
+      
 
       let user = this.$auth.user;
       let data = {
@@ -245,10 +249,16 @@ export default {
       const savedListing = await resp.data;
       console.log(savedListing);
       
+      this.isLoading = false;
+      
       this.$buefy.toast.open({
         message: 'Successflly submitted!',
         type: 'is-success'
       });
+
+      setTimeout(() => {
+        this.$router.push({ name: 'view', params: { cusipNo: this.cusipNo } });
+      }, 3000);
 
       // const formData = new FormData();
       // const file = this.file;
