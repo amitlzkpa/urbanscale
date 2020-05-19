@@ -252,13 +252,13 @@ export default {
       this.isLoading = false;
       
       this.$buefy.toast.open({
-        message: 'Successflly submitted!',
+        message: 'Successflly submitted! Taking you to the listing page.',
         type: 'is-success'
       });
 
       setTimeout(() => {
         this.$router.push({ name: 'view', params: { cusipNo: this.cusipNo } });
-      }, 3000);
+      }, 4000);
 
       // const formData = new FormData();
       // const file = this.file;

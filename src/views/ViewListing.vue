@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="ready">
     
     <b-loading :is-full-page="true" :active.sync="isLoading" :can-cancel="false"></b-loading>
 
@@ -39,7 +39,7 @@
         <b-numberinput
           v-model="tokensToBuy"
           min=1
-          :step="Math.ceil(listing.tokenSupply/1000)"
+          step=10
           expanded
           controlsPosition="compact"
         />
@@ -113,52 +113,59 @@ export default {
     this.ready = true;
   },
   methods: {
+    async executeOrder(web3) {
+
+      let contract = new web3.eth.Contract(abiDefinition, this.listing.contractAddress);
+
+      let rate = this.listing.principal / this.listing.tokenSupply;
+      let tokens = Math.floor(this.tokensToBuy);
+      let total = rate * tokens;
+      let sendVal = web3.utils.toWei((Math.ceil(total) * this.USD_TO_ETH).toString());
+
+      let acc = (await web3.eth.getAccounts())[0];
+
+      let options = {
+        from: acc,
+        value: sendVal
+      };
+
+      this.$buefy.toast.open('Submitting your request. Please stay on this page.');
+      
+      let tx = await contract.methods.buy(tokens).send(options);
+      console.log(tx);
+
+      let postBody = {
+        user: this.$auth.user,
+        listingId: this.listing._id,
+        tokens: tokens,
+        ownerEthAccAddress: acc,
+        txHash: tx.transactionHash
+      };
+    
+      let p = await axios.post('/api/purchase', postBody);
+      console.log(p);
+      
+
+      this.$buefy.toast.open({
+        message: 'Successflly bought!',
+        type: 'is-success'
+      });
+
+    },
     async buyTokenThroughMetaMask() {
 
       try {
 
-        await window.ethereum.enable();
-        let web3 = new Web3(window.web3.currentProvider);
-        let contract = new web3.eth.Contract(abiDefinition, this.listing.contractAddress);
-
-        let rate = this.listing.principal / this.listing.tokenSupply;
-        let tokens = Math.floor(this.tokensToBuy);
-        let total = rate * tokens;
-        let sendVal = web3.utils.toWei((Math.ceil(total) * this.USD_TO_ETH).toString());
-
-        let acc = (await web3.eth.getAccounts())[0];
-
-        let options = {
-          from: acc,
-          value: sendVal
-        };
-
-        this.isLoading = false;
-        this.$buefy.toast.open('Submitting your request. Please stay on this page.');
-        
-        let tx = await contract.methods.buy(tokens).send(options);
-        console.log(tx);
-
-        let postBody = {
-          user: this.$auth.user,
-          listingId: this.listing._id,
-          tokens: tokens,
-          ownerEthAccAddress: acc,
-          txHash: tx.transactionHash
-        };
-      
-        let p = await axios.post('/api/purchase', postBody);
-        console.log(p);
-        
         this.isLoading = true;
+        await window.ethereum.enable();
+        let mmaskWeb3 = new Web3(window.web3.currentProvider);
 
-        this.$buefy.toast.open({
-          message: 'Successflly bought!',
-          type: 'is-success'
-        });
+        this.executeOrder(mmaskWeb3);
 
       } catch(exc) {
         console.log(exc);
+      } finally {
+        this.isLoading = false;
       }
 
       
@@ -167,48 +174,16 @@ export default {
       
       try {
 
+        this.isLoading = true;
         let portis = new Portis('c9972761-699b-441e-a522-56b5bc729b65', 'ropsten');
         let portisWeb3 = new Web3(portis.provider);
-        let contract = new portisWeb3.eth.Contract(abiDefinition, this.listing.contractAddress);
 
-        let rate = this.listing.principal / this.listing.tokenSupply;
-        let tokens = Math.floor(this.tokensToBuy);
-        let total = rate * tokens;
-        let sendVal = portisWeb3.utils.toWei((Math.ceil(total) * this.USD_TO_ETH).toString());
-
-        let acc = (await portisWeb3.eth.getAccounts())[0];
-
-        let options = {
-          from: acc,
-          value: sendVal
-        };
-
-        this.isLoading = false;
-        this.$buefy.toast.open('Submitting your request. Please stay on this page.');
-        
-        let tx = await contract.methods.buy(tokens).send(options);
-        console.log(tx);
-
-        let postBody = {
-          user: this.$auth.user,
-          listingId: this.listing._id,
-          tokens: tokens,
-          ownerEthAccAddress: acc,
-          txHash: tx.transactionHash
-        };
-      
-        let p = await axios.post('/api/purchase', postBody);
-        console.log(p);
-
-        this.isLoading = true;
-        
-        this.$buefy.toast.open({
-          message: 'Successflly bought!',
-          type: 'is-success'
-        });
+        this.executeOrder(portisWeb3);
         
       } catch(exc) {
         console.log(exc);
+      } finally {
+        this.isLoading = false;
       }
 
     }
