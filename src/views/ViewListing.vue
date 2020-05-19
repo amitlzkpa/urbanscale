@@ -154,6 +154,17 @@ export default {
         
         let tx = await contract.methods.buy(tokens).send(options);
         console.log(tx);
+
+        let postBody = {
+          user: this.$auth.user,
+          listingId: this.listing._id,
+          tokens: tokens,
+          ownerEthAccAddress: acc,
+          txHash: tx.transactionHash
+        };
+      
+        let p = await axios.post('/api/purchase', postBody);
+        console.log(p);
         
         this.$buefy.toast.open({
           message: 'Successflly bought!',
