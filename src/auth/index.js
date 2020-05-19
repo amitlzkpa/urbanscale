@@ -1,5 +1,6 @@
 import Vue from "vue";
 import createAuth0Client from "@auth0/auth0-spa-js";
+import axios from 'axios';
 
 /** Define a default action to perform after authentication */
 const DEFAULT_REDIRECT_CALLBACK = () =>
@@ -31,6 +32,12 @@ export const useAuth0 = ({
       };
     },
     methods: {
+      async addUserToDb() {
+        if(this.isAuthenticated) {
+          let u = await axios.post("/api/users", this.user);
+          console.log(u);
+        }
+      },
       /** Authenticates the user using a popup window */
       async loginWithPopup(o) {
         this.popupOpen = true;
@@ -46,6 +53,7 @@ export const useAuth0 = ({
 
         this.user = await this.auth0Client.getUser();
         this.isAuthenticated = true;
+        await this.addUserToDb();
       },
       /** Handles the callback when logging in using a redirect */
       async handleRedirectCallback() {
@@ -57,6 +65,7 @@ export const useAuth0 = ({
         } catch (e) {
           this.error = e;
         } finally {
+          await this.addUserToDb();
           this.loading = false;
         }
       },
@@ -112,6 +121,7 @@ export const useAuth0 = ({
         // Initialize our internal authentication state
         this.isAuthenticated = await this.auth0Client.isAuthenticated();
         this.user = await this.auth0Client.getUser();
+        await this.addUserToDb();
         this.loading = false;
       }
     }
