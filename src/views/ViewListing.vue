@@ -55,36 +55,54 @@
       </div>
 
       <div class="column is-narrow" style="margin-top: 6px;">
-        
-        <b-field :label="'$ ' + Math.ceil(this.tokensToBuy * (this.listing.principal / this.listing.tokenSupply))">
+        <b-tooltip label="Total amount" :delay="200">
+          <b-field :label="'$ ' + Math.ceil(this.tokensToBuy * (this.listing.principal / this.listing.tokenSupply))">
+          </b-field>
+        </b-tooltip>
+      </div>
+
+      <div class="column is-narrow">
+
+        <b-tooltip label="Buy through Metamask" :delay="200">
+          <b-button @click="buyTokenThroughMetaMask">
+            <img src="/imgs/metamask.png" style="height: 20px;" />
+            <span style="margin-bottom: 22px;">
+              Buy
+            </span>
+          </b-button>
+        </b-tooltip>
+
+      </div>
+
+      <div class="column is-narrow">
+
+        <b-tooltip label="Buy through Portis" :delay="200">
+          <b-button @click="buyTokenThroughPortis">
+            <img src="/imgs/portis.png" style="height: 20px;" />
+            <span style="margin-bottom: 22px;">
+              Buy
+            </span>
+          </b-button>
+        </b-tooltip>
+
+      </div>
+    </div>
+
+    <hr />
+
+    <div class="columns">
+      <div class="column">
+    
+        <b-field label="Recent Purchases">
         </b-field>
-      </div>
-
-      <div class="column is-narrow">
-
-        <b-button @click="buyTokenThroughMetaMask">
-          <b-icon
-            pack="fas"
-            icon="shopping-cart"
-            size="is-small">
-          </b-icon>
-          Buy
-        </b-button>
+        
+        <PurchaseCardList :purchases="purchases" />
 
       </div>
 
-      <div class="column is-narrow">
-
-        <b-button @click="buyTokenThroughPortis">
-          <b-icon
-            pack="fas"
-            icon="plus"
-            size="is-small">
-          </b-icon>
-          Portis
-        </b-button>
-
+      <div class="column">
       </div>
+
     </div>
 
     
@@ -97,27 +115,31 @@ import Portis from '@portis/web3';
 import Web3 from 'web3';
 
 import ListingCard from '@/components/ListingCard.vue';
+import PurchaseCardList from '@/components/PurchaseCardList.vue';
 
 let abiDefinition;
 
 export default {
   name: 'ViewListing',
   components: {
-    ListingCard
+    ListingCard,
+    PurchaseCardList
   },
   data() {
     return {
       listing: null,
       tokensToBuy: 0,
       ready: false,
+      purchases: [],
       isLoading: false,
     }
   },
-  async created() {
+  async mounted() {
     let resp = await axios.get(`/api/listing/cusipNo/${this.$route.params.cusipNo}`);
     this.listing = resp.data;
     let abiRes = await axios.get("/contracts/FundToken.abi");
     abiDefinition = abiRes.data;
+    this.purchases = (await axios.get(`/api/purchase/listing/${this.listing._id}`)).data;
     this.ready = true;
   },
   methods: {

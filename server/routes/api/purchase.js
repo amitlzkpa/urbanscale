@@ -35,7 +35,6 @@ router.get('/listing/:listingId', async (req, res) => {
                                 .populate(['owner', 'listing'])
                                 .sort({createdAt: -1})
                                 .exec();
-  console.log(purchases);
   res.json(purchases);
 });
 

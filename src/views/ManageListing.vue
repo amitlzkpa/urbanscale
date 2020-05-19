@@ -49,7 +49,7 @@
           {{ parseInt(unsold).toLocaleString() }}
         </span>
     
-        <b-field label="Recent Sales">
+        <b-field label="Recent Purchases">
         </b-field>
         
         <PurchaseCardList :purchases="purchases" />
@@ -101,7 +101,6 @@ export default {
     this.deployer = await this.contract.methods.deployer().call();
     this.unsold = await this.contract.methods.balanceOf(this.deployer).call();
     this.purchases = (await axios.get(`/api/purchase/listing/${this.listing._id}`)).data;
-    console.log(this.purchases);
     this.ready = true;
   },
   methods: {

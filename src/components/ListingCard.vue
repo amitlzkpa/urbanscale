@@ -9,16 +9,24 @@
 
             <div class="column">
               <p class="is-italic is-size-7 has-text-grey">
-                {{ fuzzyTime(new Date(listing.createdAt)) }}
+                <b-tooltip label="Issued on" :delay="200">
+                  {{ fuzzyTime(new Date(listing.createdAt)) }}
+                </b-tooltip>
               </p>
               <p class="is-size-6 has-text-weight-semibold">
-                {{ listing.name }}
+                <b-tooltip label="Name" :delay="200">
+                  {{ listing.name }}
+                </b-tooltip>
               </p>
               <i class="has-text-grey">
-                {{ listing.issuer }}
+                <b-tooltip label="Issuer" :delay="200">
+                  {{ listing.issuer }}
+                </b-tooltip>
               </i>
               <p>
-                {{ listing.location }}
+                <b-tooltip label="Location" :delay="200">
+                  {{ listing.location }}
+                </b-tooltip>
               </p>
             </div>
             
