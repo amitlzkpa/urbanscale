@@ -38,6 +38,8 @@ app.get('/api/auth0-secrets', function(req, res) {
 
 app.use('/api', require('./routes/api'));
 
+app.use('*', (req, res) => res.sendFile('/dist/index.html'));
+
 app.listen(PORT, () => {
   console.log(`listening on ${PORT}`);
 });
