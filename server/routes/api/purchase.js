@@ -19,4 +19,16 @@ router.post('/', async (req, res) => {
   return res.json(purchase);
 });
 
+
+router.get('/user/:username', async (req, res) => {
+  let user = await User.findOne({username: req.params.username});
+  let purchases = await Purchase.find({owner: user._id})
+                                .populate(['owner', 'listing'])
+                                .sort({createdAt: -1})
+                                .exec();
+  res.json(purchases);
+});
+
+router.use('*', (req, res) => res.sendFile('/dist/index.html'));
+
 module.exports = router;

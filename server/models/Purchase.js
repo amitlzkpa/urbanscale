@@ -12,7 +12,7 @@ const PurchaseSchema = new mongoose.Schema({
   },
   listing: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User'
+    ref: 'Listing'
   },
   ownerEthAccAddress: {
     type: String,

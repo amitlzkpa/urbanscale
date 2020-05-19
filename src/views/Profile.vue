@@ -32,14 +32,31 @@
       </div>
 
     </div>
+
+    <hr />
+    
+    <PurchaseCardList :purchases="purchases" />
     
   </div>
 </template>
 
 <script>
+import axios from "axios";
+import PurchaseCardList from '@/components/PurchaseCardList.vue';
+
 export default {
-  created() {
-    console.log(this.$auth.user);
+  components: {
+    PurchaseCardList
+  },
+  data() {
+    return {
+      purchases: []
+    }
+  },
+  async mounted() {
+    let resp = await axios.get(`/api/purchase/user/${this.$auth.user.nickname}`);
+    this.purchases = resp.data;
+    // console.log(this.purchases);
   }
 }
 </script>
