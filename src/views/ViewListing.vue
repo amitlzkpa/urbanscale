@@ -1,5 +1,7 @@
 <template>
-  <div v-if="ready">
+  <div>
+    
+    <b-loading :is-full-page="true" :active.sync="isLoading" :can-cancel="false"></b-loading>
 
     <div class="level">
       <div class="level-left">
@@ -99,7 +101,8 @@ export default {
     return {
       listing: null,
       tokensToBuy: 0,
-      ready: false
+      ready: false,
+      isLoading: false,
     }
   },
   async created() {
@@ -130,11 +133,25 @@ export default {
           value: sendVal
         };
 
+        this.isLoading = false;
         this.$buefy.toast.open('Submitting your request. Please stay on this page.');
         
         let tx = await contract.methods.buy(tokens).send(options);
         console.log(tx);
+
+        let postBody = {
+          user: this.$auth.user,
+          listingId: this.listing._id,
+          tokens: tokens,
+          ownerEthAccAddress: acc,
+          txHash: tx.transactionHash
+        };
+      
+        let p = await axios.post('/api/purchase', postBody);
+        console.log(p);
         
+        this.isLoading = true;
+
         this.$buefy.toast.open({
           message: 'Successflly bought!',
           type: 'is-success'
@@ -166,6 +183,7 @@ export default {
           value: sendVal
         };
 
+        this.isLoading = false;
         this.$buefy.toast.open('Submitting your request. Please stay on this page.');
         
         let tx = await contract.methods.buy(tokens).send(options);
@@ -181,6 +199,8 @@ export default {
       
         let p = await axios.post('/api/purchase', postBody);
         console.log(p);
+
+        this.isLoading = true;
         
         this.$buefy.toast.open({
           message: 'Successflly bought!',
