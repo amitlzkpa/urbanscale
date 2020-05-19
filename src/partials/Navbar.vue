@@ -14,11 +14,11 @@
         <b-navbar-item tag="router-link" :to="{ path: '/about' }">
           About
         </b-navbar-item>
-        <b-navbar-item tag="router-link" :to="{ path: '/create' }">
-          Create
-        </b-navbar-item>
         <b-navbar-item tag="router-link" :to="{ path: '/listings' }">
           Listings
+        </b-navbar-item>
+        <b-navbar-item tag="router-link" :to="{ path: '/create' }" v-if="$auth.dbUser && $auth.dbUser.permissions.admin">
+          Create
         </b-navbar-item>
       </template>
 

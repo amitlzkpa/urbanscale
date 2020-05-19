@@ -26,6 +26,7 @@ export const useAuth0 = ({
         loading: true,
         isAuthenticated: false,
         user: {},
+        dbUser: null,
         auth0Client: null,
         popupOpen: false,
         error: null
@@ -34,8 +35,7 @@ export const useAuth0 = ({
     methods: {
       async addUserToDb() {
         if(this.isAuthenticated) {
-          let u = await axios.post("/api/users", this.user);
-          console.log(u);
+          this.dbUser = (await axios.post("/api/users", this.user)).data;
         }
       },
       /** Authenticates the user using a popup window */

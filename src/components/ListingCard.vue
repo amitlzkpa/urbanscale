@@ -8,6 +8,9 @@
           <div class="columns">
 
             <div class="column">
+              <p class="is-italic is-size-7 has-text-grey">
+                {{ fuzzyTime(new Date(listing.createdAt)) }}
+              </p>
               <p class="is-size-6 has-text-weight-semibold">
                 {{ listing.name }}
               </p>
@@ -59,6 +62,13 @@
               <div class="columns">
                 <div class="column">
                   <b-tooltip label="Maturity date" :delay="200">
+                    <span class="has-text-grey" style="margin-right:6px;">
+                      <b-icon
+                          pack="fas"
+                          icon="stopwatch"
+                          size="is-small">
+                      </b-icon>
+                    </span>
                     {{ new Date(listing.maturityDate).toLocaleDateString(undefined, {year: 'numeric', month: 'long', day: 'numeric'} ) }}
                   </b-tooltip>
                 </div>
@@ -96,6 +106,39 @@ export default {
     }
   },
   methods: {
+    fuzzyTime(date) {
+
+      var delta = Math.round((+new Date - date) / 1000);
+
+      var minute = 60,
+          hour = minute * 60,
+          day = hour * 24;
+
+      var fuzzy;
+
+      if (isNaN(delta)) {
+        fuzzy = '---';
+      } else if (delta < 30) {
+        fuzzy = 'just now';
+      } else if (delta < minute) {
+        fuzzy = `${delta} seconds ago`;
+      } else if (delta < 2 * minute) {
+        fuzzy = 'a minute ago'
+      } else if (delta < hour) {
+        fuzzy = `${Math.floor(delta / minute)} minutes ago`;
+      } else if (Math.floor(delta / hour) == 1) {
+        fuzzy = '1 hour ago'
+      } else if (delta < day) {
+        fuzzy = `${Math.floor(delta / hour)} hours ago`;
+      } else if (delta < day * 2) {
+        fuzzy = 'yesterday';
+      } else if (delta < day * 10) {
+        fuzzy = `${Math.floor(delta / day)} days ago`;
+      } else {
+        fuzzy = `${date.toDateString()} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
+      }
+      return fuzzy;
+    }
   }
 }
 </script>

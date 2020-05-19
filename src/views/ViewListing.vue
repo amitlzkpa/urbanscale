@@ -6,13 +6,21 @@
     <div class="level">
       <div class="level-left">
         <div class="level-item">
-          <i class="has-text-grey">
+          <p class="has-text-grey is-italic">
             CUSIP: {{ listing.cusipNo }} / EMMA: {{ listing.emmaId }}
-          </i>
+          </p>
         </div>
       </div>
 
       <div class="level-right">
+        <div class="level-item" v-if="$auth.dbUser && $auth.dbUser.permissions.admin">
+          <i class="has-grey-text">
+            <router-link :to="{ name: 'manage', params: { cusipNo: listing.cusipNo } }">
+              Manage
+            </router-link>
+          </i>
+        </div>
+         
         <div class="level-item">
           <i class="has-grey-text">
             <a :href="'https://emma.msrb.org/Security/Details/' + listing.emmaId" target="_blank">Check on EMMA</a>

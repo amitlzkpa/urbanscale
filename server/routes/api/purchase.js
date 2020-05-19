@@ -29,6 +29,15 @@ router.get('/user/:username', async (req, res) => {
   res.json(purchases);
 });
 
-router.use('*', (req, res) => res.sendFile('/dist/index.html'));
+
+router.get('/listing/:listingId', async (req, res) => {
+  let purchases = await Purchase.find({listing: req.params.listingId})
+                                .populate(['owner', 'listing'])
+                                .sort({createdAt: -1})
+                                .exec();
+  console.log(purchases);
+  res.json(purchases);
+});
+
 
 module.exports = router;

@@ -5,6 +5,7 @@ import About from '@/views/About.vue';
 import Profile from '@/views/Profile.vue';
 import CreateListing from '@/views/CreateListing.vue';
 import ViewListing from '@/views/ViewListing.vue';
+import ManageListing from '@/views/ManageListing.vue';
 import ViewAllListing from '@/views/ViewAllListing.vue';
 
 import { authGuard } from "@/auth/authGuard";
@@ -31,6 +32,12 @@ const router =  new VueRouter({
       path: '/view/:cusipNo',
       name: 'view',
       component: ViewListing,
+      beforeEnter: authGuard
+    },
+    {
+      path: '/manage/:cusipNo',
+      name: 'manage',
+      component: ManageListing,
       beforeEnter: authGuard
     },
     {
