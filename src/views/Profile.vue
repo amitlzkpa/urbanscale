@@ -52,6 +52,12 @@
     <hr />
     
     <PurchaseCardList :purchases="purchases" />
+
+    <hr />
+
+    Managed:
+    <br />
+    
     
   </div>
 </template>

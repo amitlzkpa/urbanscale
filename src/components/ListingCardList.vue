@@ -16,7 +16,7 @@ import axios from 'axios';
 import ListingCard from '@/components/ListingCard.vue';
 
 export default {
-  name: 'ViewAllListing',
+  name: 'ListingCardList',
   components: {
     ListingCard
   },

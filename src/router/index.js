@@ -6,7 +6,7 @@ import Profile from '@/views/Profile.vue';
 import CreateListing from '@/views/CreateListing.vue';
 import ViewListing from '@/views/ViewListing.vue';
 import ManageListing from '@/views/ManageListing.vue';
-import ViewAllListing from '@/views/ViewAllListing.vue';
+import ListingCardList from '@/components/ListingCardList.vue';
 
 import { authGuard } from "@/auth/authGuard";
 
@@ -43,7 +43,7 @@ const router =  new VueRouter({
     {
       path: '/listings',
       name: 'view-all',
-      component: ViewAllListing
+      component: ListingCardList
     },
     {
       path: '/about',
