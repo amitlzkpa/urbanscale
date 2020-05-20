@@ -52,6 +52,13 @@ router.get('/cusipNo/:cusipNo', async (req, res) => {
 });
 
 
+router.get('/owner/:username', async (req, res) => {
+  let user = await User.findOne({ username: req.params.username });
+  let listings = await Listing.find({ createdBy: user });
+  res.json(listings);
+});
+
+
 router.get('/all', async (req, res) => {
   let listings = await Listing.find({}).sort({createdAt: -1});
   res.json(listings);

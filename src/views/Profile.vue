@@ -55,9 +55,11 @@
 
     <hr />
 
-    Managed:
+    <b-field :label="'Managed (' + managedListings.length + '):'">
+    </b-field>
     <br />
     
+    <ListingCardList :listings="managedListings" />
     
   </div>
 </template>
@@ -65,14 +67,18 @@
 <script>
 import axios from "axios";
 import PurchaseCardList from '@/components/PurchaseCardList.vue';
+import ListingCardList from '@/components/ListingCardList.vue';
+
 
 export default {
   components: {
-    PurchaseCardList
+    PurchaseCardList,
+    ListingCardList
   },
   data() {
     return {
       purchases: [],
+      managedListings: [],
       walletAddresses: []
     }
   },
@@ -80,6 +86,8 @@ export default {
     let resp = await axios.get(`/api/purchase/user/${this.$auth.user.nickname}`);
     this.purchases = resp.data;
     this.walletAddresses = this.purchases.map(p => p.ownerEthAccAddress);
+    resp = await axios.get(`/api/listing/owner/${this.$auth.user.nickname}`);
+    this.managedListings = resp.data;
   }
 }
 </script>
