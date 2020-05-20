@@ -33,6 +33,59 @@
         <p class="has-text-grey is-italic">
           Deploying Address: {{ deployer }}
         </p>
+        
+      </div>
+      <div class="column">
+
+
+        <div class="columns">
+          <div class="column">
+            <span class="has-text-weight-bold">
+              Unsold Tokens:
+            </span>
+            <span class="has-text-grey">
+              {{ parseInt(unsold).toLocaleString() }}
+            </span>
+          </div>
+        </div>
+
+        <div class="columns">
+          <div class="column">
+            <span class="has-text-weight-bold">
+              Token to add:
+            </span>
+            <span class="has-text-grey">
+              42
+            </span>
+          </div>
+          <div class="column">
+            <span class="has-text-weight-bold">
+              Cash Component:
+            </span>
+            <span class="has-text-grey">
+              $ 420
+            </span>
+          </div>
+        </div>
+
+        <b-button
+          v-if="!hasTradingEnabled"
+          size="is-large"
+          type="is-primary"
+          expanded
+          @click="createExchange">
+            Enable Trading
+        </b-button>
+
+        <b-button
+          v-else
+          size="is-large"
+          type="is-primary"
+          expanded
+          outlined
+          @click="console.log('foo');">
+            Add Funds
+        </b-button>
 
       </div>
     </div>
@@ -41,13 +94,6 @@
 
     <div class="columns">
       <div class="column">
-    
-        <span class="has-text-weight-bold">
-          Unsold Tokens:
-        </span>
-        <span class="has-text-grey">
-          {{ parseInt(unsold).toLocaleString() }}
-        </span>
     
         <b-field label="Recent Purchases">
         </b-field>
@@ -71,7 +117,18 @@ import PurchaseCardList from '@/components/PurchaseCardList.vue';
 
 import ListingCard from '@/components/ListingCard.vue';
 
-let abiDefinition;
+let listingABI;
+let uniswapABI;
+let uniswapRopsten = '0x9c83dCE8CA20E9aAF9D3efc003b2ea62aBC08351';
+let uniswapFctContract;
+
+let web3;
+
+// approve(delegateAddress, numTokens)
+// transfer(receiverAddress, numTokens)
+// transferFrom(ownerAddress, receiverAddress, numTokens)
+// allowance(ownerAddress, delegateAddress)
+// balanceOf(address)
 
 export default {
   name: 'ViewListing',
@@ -87,23 +144,57 @@ export default {
       contract: null,
       deployer: null,
       unsold: null,
+      tradingContractAddress: null,
       purchases: []
     }
   },
   async mounted() {
     let resp = await axios.get(`/api/listing/cusipNo/${this.$route.params.cusipNo}`);
     this.listing = resp.data;
-    let abiRes = await axios.get("/contracts/FundToken.abi");
-    abiDefinition = abiRes.data;
+    let listingABIRes = await axios.get("/contracts/FundToken.abi");
+    listingABI = listingABIRes.data;
+    let uniswapABIRes = await axios.get("/contracts/UniswapFactory.abi");
+    uniswapABI = uniswapABIRes.data;
     await window.ethereum.enable();
-    let web3 = new Web3(window.web3.currentProvider);
-    this.contract = new web3.eth.Contract(abiDefinition, this.listing.contractAddress);
+    web3 = new Web3(window.web3.currentProvider);
+    this.contract = new web3.eth.Contract(listingABI, this.listing.contractAddress);
     this.deployer = await this.contract.methods.deployer().call();
     this.unsold = await this.contract.methods.balanceOf(this.deployer).call();
     this.purchases = (await axios.get(`/api/purchase/listing/${this.listing._id}`)).data;
+    uniswapFctContract = new web3.eth.Contract(uniswapABI, uniswapRopsten);
+    this.tradingContractAddress = await uniswapFctContract.methods.getExchange(this.listing.contractAddress).call();
     this.ready = true;
   },
+  computed: {
+    hasTradingEnabled() {
+      return this.tradingContractAddress !== "0x0000000000000000000000000000000000000000";
+    }
+  },
   methods: {
+    async createExchange() {
+      let acc = (await web3.eth.getAccounts())[0];
+
+      let options = {
+        from: acc
+      };
+      
+      let ex = await uniswapFctContract.methods.createExchange(this.listing.contractAddress).send(options);
+
+      console.log(ex);
+
+      let postData = {
+        user: this.$auth.user,
+        listing: this.listing,
+        exchangeAddress: ex.events.NewExchange.address
+      };
+
+      console.log(postData);
+
+      let tpool = await axios.post("/api/trading-pool/", postData);
+      
+      console.log(tpool);
+      
+    }
   }
 }
 </script>
