@@ -13,7 +13,7 @@
       </div>
 
       <div class="level-right">
-        <div class="level-item" v-if="$auth.dbUser && $auth.dbUser.permissions.admin">
+        <div class="level-item" v-if="$auth.dbUser._id === listing.createdBy">
           <i class="has-grey-text">
             <router-link :to="{ name: 'manage', params: { cusipNo: listing.cusipNo } }">
               Manage
@@ -190,7 +190,8 @@ export default {
         await window.ethereum.enable();
         let mmaskWeb3 = new Web3(window.web3.currentProvider);
 
-        this.executeOrder(mmaskWeb3);
+        await this.executeOrder(mmaskWeb3);
+        location.reload();
 
       } catch(exc) {
         console.log(exc);
@@ -208,7 +209,8 @@ export default {
         let portis = new Portis('c9972761-699b-441e-a522-56b5bc729b65', 'ropsten');
         let portisWeb3 = new Web3(portis.provider);
 
-        this.executeOrder(portisWeb3);
+        await this.executeOrder(portisWeb3);
+        location.reload();
         
       } catch(exc) {
         console.log(exc);
