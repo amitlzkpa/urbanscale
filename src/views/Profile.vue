@@ -59,7 +59,7 @@
     </b-field>
     <br />
     
-    <ListingCardList :listings="managedListings" />
+    <ListingCardList :listings.sync="managedListings" />
     
   </div>
 </template>

@@ -1,7 +1,7 @@
 <template>
   <div>
     
-    <p v-for="listing in listings" :key="listing.cusipNo">
+    <p v-for="listing in intListings" :key="listing.cusipNo">
       <router-link :to="{ name: 'view', params: { cusipNo: listing.cusipNo } }">
         <ListingCard :listing="listing" />
       </router-link>
@@ -20,16 +20,24 @@ export default {
   components: {
     ListingCard
   },
+  props: ['listings'],
   data() {
     return {
-      listings: []
+      intListings: []
     }
   },
   async created() {
-    let resp = await axios.get('/api/listing/all');
-    this.listings = resp.data;
+    if (this.listings) {
+      this.intListings = this.listings;
+    } else {
+      let resp = await axios.get('/api/listing/all');
+      this.intListings = resp.data;
+    }
   },
-  methods: {
+  watch: { 
+    listings: function(newVal) {
+      this.intListings = newVal
+    }
   }
 }
 </script>
