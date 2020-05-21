@@ -69,6 +69,9 @@ import axios from "axios";
 import PurchaseCardList from '@/components/PurchaseCardList.vue';
 import ListingCardList from '@/components/ListingCardList.vue';
 
+const sleep = (milliseconds) => {
+  return new Promise(resolve => setTimeout(resolve, milliseconds))
+}
 
 export default {
   components: {
@@ -83,6 +86,7 @@ export default {
     }
   },
   async mounted() {
+    while(!this.$auth.user.nickname) await sleep(1);
     let resp = await axios.get(`/api/purchase/user/${this.$auth.user.nickname}`);
     this.purchases = resp.data;
     this.walletAddresses = this.purchases.map(p => p.ownerEthAccAddress);
