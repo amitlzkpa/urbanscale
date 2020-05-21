@@ -7,6 +7,7 @@ import CreateListing from '@/views/CreateListing.vue';
 import ViewListing from '@/views/ViewListing.vue';
 import ManageListing from '@/views/ManageListing.vue';
 import ListingCardList from '@/components/ListingCardList.vue';
+import ViewPurchase from '@/views/ViewPurchase.vue';
 
 import { authGuard } from "@/auth/authGuard";
 
@@ -38,6 +39,12 @@ const router =  new VueRouter({
       path: '/manage/:cusipNo',
       name: 'manage',
       component: ManageListing,
+      beforeEnter: authGuard
+    },
+    {
+      path: '/purchase/:userId/:purchaseId',
+      name: 'purchase',
+      component: ViewPurchase,
       beforeEnter: authGuard
     },
     {
