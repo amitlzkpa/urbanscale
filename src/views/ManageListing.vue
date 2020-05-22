@@ -62,7 +62,7 @@
                 controlsPosition="compact"
               />
               <p class="control">
-                <button class="button is-static">$ {{ (tokensToAdd * (this.listing.principal / this.listing.tokenSupply)).toFixed(2) }}</button>
+                <button class="button is-static">$ {{ dollarValue.toFixed(2) }}</button>
               </p>
             </b-field>
           </div>
@@ -72,6 +72,7 @@
           v-if="!hasTradingEnabled"
           size="is-large"
           type="is-primary"
+          :disabled="tokensToAdd < 1"
           expanded
           @click="createExchange">
             Enable Trading
@@ -81,9 +82,10 @@
           v-else
           size="is-large"
           type="is-primary"
+          :disabled="tokensToAdd < 1"
           expanded
           outlined
-          @click="console.log('foo');">
+          @click="addFunds">
             Add Funds
         </b-button>
 
@@ -119,6 +121,7 @@ import ListingCard from '@/components/ListingCard.vue';
 
 let listingABI;
 let uniswapABI;
+let exchangeABI;
 let uniswapRopsten = '0x9c83dCE8CA20E9aAF9D3efc003b2ea62aBC08351';
 let uniswapFctContract;
 
@@ -145,7 +148,7 @@ export default {
       deployer: null,
       unsold: null,
       tokensToAdd: 0,
-      tradingContractAddress: null,
+      exchangeAddress: null,
       purchases: []
     }
   },
@@ -156,6 +159,8 @@ export default {
     listingABI = listingABIRes.data;
     let uniswapABIRes = await axios.get("/contracts/UniswapFactory.abi");
     uniswapABI = uniswapABIRes.data;
+    let exchangeABIRes = await axios.get("/contracts/UniswapExchange.abi");
+    exchangeABI = exchangeABIRes.data;
     await window.ethereum.enable();
     web3 = new Web3(window.web3.currentProvider);
     this.contract = new web3.eth.Contract(listingABI, this.listing.contractAddress);
@@ -163,12 +168,15 @@ export default {
     this.unsold = await this.contract.methods.balanceOf(this.deployer).call();
     this.purchases = (await axios.get(`/api/purchase/listing/${this.listing._id}`)).data;
     uniswapFctContract = new web3.eth.Contract(uniswapABI, uniswapRopsten);
-    this.tradingContractAddress = await uniswapFctContract.methods.getExchange(this.listing.contractAddress).call();
+    this.exchangeAddress = await uniswapFctContract.methods.getExchange(this.listing.contractAddress).call();
     this.ready = true;
   },
   computed: {
     hasTradingEnabled() {
-      return this.tradingContractAddress !== "0x0000000000000000000000000000000000000000";
+      return this.exchangeAddress !== "0x0000000000000000000000000000000000000000";
+    },
+    dollarValue() {
+      return this.tokensToAdd * (this.listing.principal / this.listing.tokenSupply);
     }
   },
   methods: {
@@ -194,15 +202,46 @@ export default {
       let tpool = await axios.post("/api/trading-pool/", postData);
       
       console.log(tpool);
-      
+
+      this.exchangeAddress = ex.events.NewExchange.address;
+
     },
     async addFunds() {
+      
+      
+      let acc = (await web3.eth.getAccounts())[0];
+      console.log(acc);
 
-      // allow exchange to withdraw from contract
-      // add liquidity
 
-      let tokensToAdd = this.tokensToAdd;
-      console.log(tokensToAdd);
+      // -------------------------------------
+      // let options = {
+      //   from: acc
+      // };
+
+      // let tx = await this.contract.methods.approve(this.exchangeAddress, this.tokensToAdd).send(options);
+      // console.log(tx);
+      // -------------------------------------
+
+
+      let total = this.dollarValue;
+      let sendVal = web3.utils.toWei((Math.ceil(total) * this.USD_TO_ETH).toString());
+
+      console.log(this.exchangeAddress);
+
+      let opts = {
+        from: this.exchangeAddress.toString(),
+        value: sendVal,
+      };
+
+      let exContract = new web3.eth.Contract(exchangeABI, this.exchangeAddress);
+
+      console.log(exContract);
+
+      let expiryTime = Math. round((new Date().getTime() / 1000) + (60 * 60 * 30));
+      console.log(expiryTime);
+      
+      let rx = await exContract.methods.addLiquidity(0, this.tokensToAdd, expiryTime).send(opts);
+      console.log(rx);
 
       
     }
