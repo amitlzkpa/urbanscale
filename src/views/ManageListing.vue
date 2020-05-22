@@ -52,19 +52,19 @@
         <div class="columns">
           <div class="column">
             <span class="has-text-weight-bold">
-              Token to add:
+              Tokens to add:
             </span>
-            <span class="has-text-grey">
-              42
-            </span>
-          </div>
-          <div class="column">
-            <span class="has-text-weight-bold">
-              Cash Component:
-            </span>
-            <span class="has-text-grey">
-              $ 420
-            </span>
+            <b-field>
+              <b-numberinput
+                v-model="tokensToAdd"
+                min=0
+                expanded
+                controlsPosition="compact"
+              />
+              <p class="control">
+                <button class="button is-static">$ {{ (tokensToAdd * (this.listing.principal / this.listing.tokenSupply)).toFixed(2) }}</button>
+              </p>
+            </b-field>
           </div>
         </div>
 
@@ -144,6 +144,7 @@ export default {
       contract: null,
       deployer: null,
       unsold: null,
+      tokensToAdd: 0,
       tradingContractAddress: null,
       purchases: []
     }
@@ -193,6 +194,16 @@ export default {
       let tpool = await axios.post("/api/trading-pool/", postData);
       
       console.log(tpool);
+      
+    },
+    async addFunds() {
+
+      // allow exchange to withdraw from contract
+      // add liquidity
+
+      let tokensToAdd = this.tokensToAdd;
+      console.log(tokensToAdd);
+
       
     }
   }
