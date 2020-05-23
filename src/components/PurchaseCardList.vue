@@ -2,7 +2,11 @@
   <div>
     
     <p v-for="purchase in purchases" :key="purchase._id">
-      <PurchaseCard :purchase="purchase" />
+      
+      <router-link :to="{ name: 'purchase', params: { userName:$auth.user.nickname, purchaseId: purchase._id } }">
+        <PurchaseCard :purchase="purchase" />
+      </router-link>
+
       <br />
     </p>
     

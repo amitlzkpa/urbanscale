@@ -42,7 +42,7 @@ const router =  new VueRouter({
       beforeEnter: authGuard
     },
     {
-      path: '/purchase/:userId/:purchaseId',
+      path: '/purchase/:userName/:purchaseId',
       name: 'purchase',
       component: ViewPurchase,
       beforeEnter: authGuard
