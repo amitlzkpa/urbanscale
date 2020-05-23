@@ -111,17 +111,27 @@
 
         
         <foreignObject
-          x="100"
-          y="180"
-          width="300"
+          x="80"
+          y="195"
+          width="220"
           height="100" 
           requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility">
           <p
-            style="font-size:0.7em;text-align:center;"
+            style="font-size:0.7em;text-align:center;line-height: 90%;"
             id="cert_text"
           >
             __CERT_TEXT__
           </p>
+        </foreignObject>
+
+        
+        <foreignObject
+          x="320"
+          y="175"
+          width="80"
+          height="80" 
+          requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility">
+          <vue-qrcode :value=qrVal :scale=2.4 />
         </foreignObject>
 
 
@@ -134,12 +144,17 @@
 
 <script>
 import axios from "axios";
+import VueQrcode from "vue-qrcode";
 
 export default {
+  components: {
+    VueQrcode
+  },
   data() {
     return {
       user: null,
       purchaseItem: null,
+      qrVal: " ",
     }
   },
   async mounted() {
@@ -161,9 +176,11 @@ export default {
     document.getElementById("cert_issuerName").innerHTML = this.purchaseItem.listing.issuer;
     document.getElementById("cert_ownerName").innerHTML = this.purchaseItem.owner.name;
 
-    let text = `This certificate certifies the owner of this document to be holder of ${this.purchaseItem.tokens} tokens from the ${this.purchaseItem.listing.tokenSupply} tokens issued by the issuer on ${new Date(this.purchaseItem.listing.createdAt).toLocaleDateString()}.
+    let text = `This certificate certifies the owner of this document to be holder of ${this.purchaseItem.tokens} tokens from the ${Number(this.purchaseItem.listing.tokenSupply).toLocaleString()} tokens for $${Number(this.purchaseItem.listing.principal).toLocaleString()} issued by the issuer on ${new Date(this.purchaseItem.listing.createdAt).toLocaleDateString()}.
     It entitles the owner to collect benefits at the guaranteed rate of ${(this.purchaseItem.listing.coupon/1000000).toFixed(2)}% till ${new Date(this.purchaseItem.listing.maturityDate).toLocaleDateString()}.`;
     document.getElementById("cert_text").innerHTML = text;
+
+    this.qrVal = this.purchaseItem._id;
 
   }
 }
