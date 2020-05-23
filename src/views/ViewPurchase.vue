@@ -33,7 +33,7 @@
           font-size="0.5em"
           x="70"
           y="60"
-        >
+          >
           <tspan>
             CUSIP NO:
           </tspan>
@@ -48,7 +48,7 @@
           text-anchor="middle"
           x="250"
           y="60"
-        >
+          >
           BOND CERTIFICATE
         </text>
 
@@ -60,7 +60,7 @@
           height="200" 
           requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility">
           <p
-            style="font-size:1.2em;text-align:center;font-family:'Bookman_Header';font-weight: 700;"
+            style="font-size:1.2em;text-align:center;font-family:'Bookman';font-weight: 700;"
             id="cert_name"
           >
             __BOND_NAME__
@@ -74,7 +74,7 @@
           text-anchor="middle"
           x="250"
           y="130"
-        >
+          >
           ISSUED BY:
         </text>
 
@@ -84,7 +84,7 @@
           x="250"
           y="142"
           id="cert_issuerName"
-        >
+          >
           __ISSUER_NAME__
         </text>
 
@@ -95,7 +95,7 @@
           text-anchor="middle"
           x="250"
           y="160"
-        >
+          >
           OWNER:
         </text>
 
@@ -105,9 +105,24 @@
           x="250"
           y="172"
           id="cert_ownerName"
-        >
+          >
           __OWNER_NAME__
         </text>
+
+        
+        <foreignObject
+          x="100"
+          y="180"
+          width="300"
+          height="100" 
+          requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility">
+          <p
+            style="font-size:0.7em;text-align:center;"
+            id="cert_text"
+          >
+            __CERT_TEXT__
+          </p>
+        </foreignObject>
 
 
       </svg>
@@ -137,7 +152,7 @@ export default {
       let resp = await axios.get(`/api/purchase/id/${this.$route.params.purchaseId}`);
       this.purchaseItem = await resp.data;
     }
-    
+
     console.log(this.purchaseItem);
 
     if (!this.purchaseItem) return;
@@ -145,7 +160,10 @@ export default {
     document.getElementById("cert_cusipNo").innerHTML = this.purchaseItem.listing.cusipNo;
     document.getElementById("cert_issuerName").innerHTML = this.purchaseItem.listing.issuer;
     document.getElementById("cert_ownerName").innerHTML = this.purchaseItem.owner.name;
-    
+
+    let text = `This certificate certifies the owner of this document to be holder of ${this.purchaseItem.tokens} tokens from the ${this.purchaseItem.listing.tokenSupply} tokens issued by the issuer on ${new Date(this.purchaseItem.listing.createdAt).toLocaleDateString()}.
+    It entitles the owner to collect benefits at the guaranteed rate of ${(this.purchaseItem.listing.coupon/1000000).toFixed(2)}% till ${new Date(this.purchaseItem.listing.maturityDate).toLocaleDateString()}.`;
+    document.getElementById("cert_text").innerHTML = text;
 
   }
 }
