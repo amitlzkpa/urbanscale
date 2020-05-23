@@ -20,6 +20,14 @@ router.post('/', async (req, res) => {
 });
 
 
+router.get('/id/:purchaseId', async (req, res) => {
+  let purchases = await Purchase.findOne({_id: req.params.purchaseId})
+                                .populate(['owner', 'listing'])
+                                .exec();
+  res.json(purchases);
+});
+
+
 router.get('/user/:username', async (req, res) => {
   let user = await User.findOne({username: req.params.username});
   let purchases = await Purchase.find({owner: user._id})

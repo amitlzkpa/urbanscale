@@ -40,25 +40,25 @@ export default {
   },
   methods: {
     async onClickGetByIdBtn() {
-      let resp = await axios.get(`api/users/id/${this.getId}`);
+      let resp = await axios.get(`/api/users/id/${this.getId}`);
       let user = resp.data;
       console.log(user);
       this.result = JSON.stringify(user, null, 4);
     },
     async onClickGetByEmailBtn() {
-      let resp = await axios.get(`api/users/email/${this.getEmail}`);
+      let resp = await axios.get(`/api/users/email/${this.getEmail}`);
       let user = resp.data;
       console.log(user);
       this.result = JSON.stringify(user, null, 4);
     },
     async onClickGetByUsernameBtn() {
-      let resp = await axios.get(`api/users/username/${this.getUsername}`);
+      let resp = await axios.get(`/api/users/username/${this.getUsername}`);
       let user = await resp.data;
       console.log(user);
       this.result = JSON.stringify(user, null, 4);
     },
     async onClickGetAllBtn() {
-      let resp = await axios.get('api/users/all');
+      let resp = await axios.get('/api/users/all');
       let users = await resp.data;
       console.log(users);
       this.result = JSON.stringify(users, null, 4);
