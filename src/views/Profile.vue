@@ -50,14 +50,15 @@
     </div>
 
     <hr />
-    
+
+    <b-field :label="'Owned (' + purchases.length + '):'">
+    </b-field>
     <PurchaseCardList :purchases="purchases" />
 
     <hr />
 
     <b-field :label="'Managed (' + managedListings.length + '):'">
     </b-field>
-    <br />
     
     <ListingCardList :listings.sync="managedListings" />
     

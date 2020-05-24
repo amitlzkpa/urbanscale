@@ -63,9 +63,9 @@
 
       <div class="column is-narrow">
 
-        <b-tooltip label="Buy" :delay="200">
+        <b-tooltip label="Purchase" :delay="200">
           <b-button @click="buyTokens" type="is-primary">
-            Buy
+            Purchase
           </b-button>
         </b-tooltip>
 
@@ -169,7 +169,7 @@ export default {
         });
 
         setTimeout(() => {
-          this.$router.push({ name: 'purchase', params: { userName: this.$$auth.user.nickname, purchaseId: p._id } });
+          this.$router.push({ name: 'purchase', params: { userName: this.$auth.user.nickname, purchaseId: p._id } });
         }, 4000);
 
         

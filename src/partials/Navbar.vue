@@ -52,7 +52,7 @@
             tag="router-link"
             :to="{ path: '/profile' }"
           >
-            Profile
+            Portfolio
           </b-navbar-item>
           <b-navbar-item @click="logout">Logout</b-navbar-item>
         </b-navbar-dropdown>
