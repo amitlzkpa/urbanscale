@@ -182,24 +182,14 @@ export default {
         // get contract details
         // send user contract and pool data to backend
 
-        let abiRes = await axios.get("/contracts/FundToken.abi");
+        let abiRes = await axios.get("/contracts/UniswapV2ERC20.abi");
         let abiDefinition = abiRes.data;
         
-        let byteCodeRes = await axios.get("/contracts/FundToken.bytecode");
+        let byteCodeRes = await axios.get("/contracts/UniswapV2ERC20.bytecode");
         let byteCode = byteCodeRes.data.object;
 
         let web3 = this.$store.getters.web3;
         let Contract = new web3.eth.Contract(abiDefinition);
-
-
-        // contract arg order
-        //  constructor (string memory _name,
-        //               string memory _cusipNo,
-        //               string memory _emmaId,
-        //               uint256 _maturityDate,
-        //               uint256 _principal,
-        //               uint256 _coupon,
-        //               uint256 totalSupply)
 
         let maturityDate_unix = new Date(this.maturityDate).getTime() / 1000;
         let coupon_int = parseInt(this.coupon * 1000000);
@@ -268,7 +258,7 @@ export default {
       } finally {
 
         this.isLoading = false;
-        
+
       }
       
     }
