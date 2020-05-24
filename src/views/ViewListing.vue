@@ -64,7 +64,7 @@
       <div class="column is-narrow">
 
         <b-tooltip label="Buy" :delay="200">
-          <b-button @click="buyTokens">
+          <b-button @click="buyTokens" type="is-primary">
             Buy
           </b-button>
         </b-tooltip>
@@ -164,9 +164,13 @@ export default {
         console.log(p);
 
         this.$buefy.toast.open({
-          message: 'Successflly bought!',
+          message: 'Successflly purchased! Taking you to the certificate page.',
           type: 'is-success'
         });
+
+        setTimeout(() => {
+          this.$router.push({ name: 'purchase', params: { userName: this.$$auth.user.nickname, purchaseId: p._id } });
+        }, 4000);
 
         
       } catch(ex) {

@@ -146,9 +146,7 @@
 
 <script>
 import axios from 'axios';
-import Web3 from 'web3';
 
-let web3;
 
 export default {
   name: 'CreateListing',
@@ -169,103 +167,109 @@ export default {
       tokenSupply: 0
     }
   },
-  async created() {
-    if(window.ethereum) {
-      await window.ethereum.enable();
-      web3 = new Web3(window.web3.currentProvider);
-    }
-  },
   methods: {
     async onEmmaUpdate() {
       this.emmaUrl = `https://emma.msrb.org/Security/Details/${this.emmaId}`;
     },
     async onSubmit() {
       
-      // deploy contract
-      // get contract details
-      // send user contract and pool data to backend
 
-      let abiRes = await axios.get("/contracts/FundToken.abi");
-      let abiDefinition = abiRes.data;
-      
-      let byteCodeRes = await axios.get("/contracts/FundToken.bytecode");
-      let byteCode = byteCodeRes.data.object;
+      try {
 
-      let Contract = new web3.eth.Contract(abiDefinition);
+        this.isLoading = true;
+
+        // deploy contract
+        // get contract details
+        // send user contract and pool data to backend
+
+        let abiRes = await axios.get("/contracts/FundToken.abi");
+        let abiDefinition = abiRes.data;
+        
+        let byteCodeRes = await axios.get("/contracts/FundToken.bytecode");
+        let byteCode = byteCodeRes.data.object;
+
+        let web3 = this.$store.getters.web3;
+        let Contract = new web3.eth.Contract(abiDefinition);
 
 
-      // contract arg order
-      //  constructor (string memory _name,
-      //               string memory _cusipNo,
-      //               string memory _emmaId,
-      //               uint256 _maturityDate,
-      //               uint256 _principal,
-      //               uint256 _coupon,
-      //               uint256 totalSupply)
+        // contract arg order
+        //  constructor (string memory _name,
+        //               string memory _cusipNo,
+        //               string memory _emmaId,
+        //               uint256 _maturityDate,
+        //               uint256 _principal,
+        //               uint256 _coupon,
+        //               uint256 totalSupply)
 
-      let maturityDate_unix = new Date(this.maturityDate).getTime() / 1000;
-      let coupon_int = parseInt(this.coupon * 1000000);
+        let maturityDate_unix = new Date(this.maturityDate).getTime() / 1000;
+        let coupon_int = parseInt(this.coupon * 1000000);
 
-      let args = [
-        this.name,
-        this.cusipNo,
-        this.emmaId,
-        maturityDate_unix,
-        this.principal,
-        coupon_int,
-        this.tokenSupply
-      ];
-      
-      let tx = await Contract.deploy({
-        arguments: args,
-        data: byteCode,
-      });
+        let args = [
+          this.name,
+          this.cusipNo,
+          this.emmaId,
+          maturityDate_unix,
+          this.principal,
+          coupon_int,
+          this.tokenSupply
+        ];
+        
+        let tx = await Contract.deploy({
+          arguments: args,
+          data: byteCode,
+        });
 
-      let acc = (await web3.eth.getAccounts())[0];
+        let acc = (await web3.eth.getAccounts())[0];
 
-      this.isLoading = true;
+        let contract = await tx.send({from: acc});
 
-      let contract = await tx.send({from: acc});
+        this.$buefy.toast.open('Submitting your request. Please stay on this page.');
+        
 
-      this.$buefy.toast.open('Submitting your request. Please stay on this page.');
-      
+        let user = this.$auth.user;
+        let data = {
+          user: user,
+          name: this.name,
+          issuer: this.issuer,
+          cusipNo: this.cusipNo,
+          emmaId: this.emmaId,
+          maturityDate: this.maturityDate,
+          principal: this.principal,
+          coupon: coupon_int,
+          tokenSupply: this.tokenSupply,
+          description: this.description,
+          location: this.location,
+          contractAddress: contract._address
+        };
+        const resp = await axios.post('/api/listing', data);
+        const savedListing = await resp.data;
+        console.log(savedListing);
+        
+        this.isLoading = false;
+        
+        this.$buefy.toast.open({
+          message: 'Successflly submitted! Taking you to the listing page.',
+          type: 'is-success'
+        });
 
-      let user = this.$auth.user;
-      let data = {
-        user: user,
-        name: this.name,
-        issuer: this.issuer,
-        cusipNo: this.cusipNo,
-        emmaId: this.emmaId,
-        maturityDate: this.maturityDate,
-        principal: this.principal,
-        coupon: coupon_int,
-        tokenSupply: this.tokenSupply,
-        description: this.description,
-        location: this.location,
-        contractAddress: contract._address
-      };
-      const resp = await axios.post('/api/listing', data);
-      const savedListing = await resp.data;
-      console.log(savedListing);
-      
-      this.isLoading = false;
-      
-      this.$buefy.toast.open({
-        message: 'Successflly submitted! Taking you to the listing page.',
-        type: 'is-success'
-      });
+        setTimeout(() => {
+          this.$router.push({ name: 'view', params: { cusipNo: this.cusipNo } });
+        }, 4000);
 
-      setTimeout(() => {
-        this.$router.push({ name: 'view', params: { cusipNo: this.cusipNo } });
-      }, 4000);
+        // const formData = new FormData();
+        // const file = this.file;
+        // formData.append('file', file);
+        // const imgUpResp = await axios.post(`/api/listing/${savedGroup._id}/image/upload`, formData);
+        // const savedImage = await imgUpResp.data;
+        // console.log(savedImage);
 
-      // const formData = new FormData();
-      // const file = this.file;
-      // formData.append('file', file);
-      // const imgUpResp = await axios.post(`/api/listing/${savedGroup._id}/image/upload`, formData);
-      // const savedImage = await imgUpResp.data;
-      // console.log(savedImage);
+      } catch(ex) {
+        console.log(ex);
+      } finally {
+
+        this.isLoading = false;
+        
+      }
       
     }
   }
