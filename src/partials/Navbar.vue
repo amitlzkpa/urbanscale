@@ -24,6 +24,14 @@
 
       <template slot="end">
 
+        <b-navbar-item tag="div" v-if="$auth.isAuthenticated">
+          <div class="field" @click="web3Updated">
+            <b-switch v-model="usePortis">
+              <img :src="'/imgs/' + (usePortis ? 'portis.png' : 'metamask.png')" />
+            </b-switch>
+          </div>
+        </b-navbar-item>
+
         <b-navbar-item tag="div" v-if="!$auth.isAuthenticated">
           <div class="buttons">
             <a class="button is-primary"
@@ -58,7 +66,16 @@
 <script>
 export default {
   name: 'Navbar',
+  data() {
+    return {
+      usePortis: true
+    }
+  },
   methods: {
+    web3Updated() {
+      let p = (this.usePortis) ? this.mmask_Web3 : this.portis_Web3;
+      this.$store.commit("web3Provider", p);
+    },
     login() {
       this.$auth.loginWithRedirect();
     },

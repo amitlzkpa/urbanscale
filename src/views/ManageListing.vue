@@ -134,7 +134,7 @@ let web3;
 // balanceOf(address)
 
 export default {
-  name: 'ViewListing',
+  name: 'ManageListing',
   components: {
     ListingCard,
     PurchaseCardList

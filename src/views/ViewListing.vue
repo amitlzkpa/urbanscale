@@ -63,29 +63,14 @@
 
       <div class="column is-narrow">
 
-        <b-tooltip label="Buy through Metamask" :delay="200">
-          <b-button @click="buyTokenThroughMetaMask">
-            <img src="/imgs/metamask.png" style="height: 20px;" />
-            <span style="margin-bottom: 22px;">
-              Buy
-            </span>
+        <b-tooltip label="Buy" :delay="200">
+          <b-button @click="buyTokens">
+            Buy
           </b-button>
         </b-tooltip>
 
       </div>
 
-      <div class="column is-narrow">
-
-        <b-tooltip label="Buy through Portis" :delay="200">
-          <b-button @click="buyTokenThroughPortis">
-            <img src="/imgs/portis.png" style="height: 20px;" />
-            <span style="margin-bottom: 22px;">
-              Buy
-            </span>
-          </b-button>
-        </b-tooltip>
-
-      </div>
     </div>
 
     <hr />
@@ -111,8 +96,6 @@
 
 <script>
 import axios from 'axios';
-import Portis from '@portis/web3';
-import Web3 from 'web3';
 
 import ListingCard from '@/components/ListingCard.vue';
 import PurchaseCardList from '@/components/PurchaseCardList.vue';
@@ -143,77 +126,51 @@ export default {
     this.ready = true;
   },
   methods: {
-    async executeOrder(web3) {
-
-      let contract = new web3.eth.Contract(abiDefinition, this.listing.contractAddress);
-
-      let rate = this.listing.principal / this.listing.tokenSupply;
-      let tokens = Math.floor(this.tokensToBuy);
-      let total = rate * tokens;
-      let sendVal = web3.utils.toWei((Math.ceil(total) * this.USD_TO_ETH).toString());
-
-      let acc = (await web3.eth.getAccounts())[0];
-
-      let options = {
-        from: acc,
-        value: sendVal
-      };
-
-      this.$buefy.toast.open('Submitting your request. Please stay on this page.');
-      
-      let tx = await contract.methods.buy(tokens).send(options);
-      console.log(tx);
-
-      let postBody = {
-        user: this.$auth.user,
-        listingId: this.listing._id,
-        tokens: tokens,
-        ownerEthAccAddress: acc,
-        txHash: tx.transactionHash
-      };
-    
-      let p = await axios.post('/api/purchase', postBody);
-      console.log(p);
-      
-
-      this.$buefy.toast.open({
-        message: 'Successflly bought!',
-        type: 'is-success'
-      });
-
-    },
-    async buyTokenThroughMetaMask() {
+    async buyTokens() {
 
       try {
 
         this.isLoading = true;
-        await window.ethereum.enable();
-        let mmaskWeb3 = new Web3(window.web3.currentProvider);
+        let web3 = this.$store.getters.web3;
 
-        await this.executeOrder(mmaskWeb3);
-        location.reload();
+        let contract = new web3.eth.Contract(abiDefinition, this.listing.contractAddress);
 
-      } catch(exc) {
-        console.log(exc);
-      } finally {
-        this.isLoading = false;
-      }
+        let rate = this.listing.principal / this.listing.tokenSupply;
+        let tokens = Math.floor(this.tokensToBuy);
+        let total = rate * tokens;
+        let sendVal = web3.utils.toWei((Math.ceil(total) * this.USD_TO_ETH).toString());
 
-      
-    },
-    async buyTokenThroughPortis() {
-      
-      try {
+        let acc = (await web3.eth.getAccounts())[0];
 
-        this.isLoading = true;
-        let portis = new Portis('c9972761-699b-441e-a522-56b5bc729b65', 'ropsten');
-        let portisWeb3 = new Web3(portis.provider);
+        let options = {
+          from: acc,
+          value: sendVal
+        };
 
-        await this.executeOrder(portisWeb3);
-        location.reload();
+        this.$buefy.toast.open('Submitting your request. Please stay on this page.');
         
-      } catch(exc) {
-        console.log(exc);
+        let tx = await contract.methods.buy(tokens).send(options);
+        console.log(tx);
+
+        let postBody = {
+          user: this.$auth.user,
+          listingId: this.listing._id,
+          tokens: tokens,
+          ownerEthAccAddress: acc,
+          txHash: tx.transactionHash
+        };
+      
+        let p = await axios.post('/api/purchase', postBody);
+        console.log(p);
+
+        this.$buefy.toast.open({
+          message: 'Successflly bought!',
+          type: 'is-success'
+        });
+
+        
+      } catch(ex) {
+        console.log(ex);
       } finally {
         this.isLoading = false;
       }
