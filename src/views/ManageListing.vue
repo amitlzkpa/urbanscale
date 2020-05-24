@@ -69,17 +69,6 @@
         </div>
 
         <b-button
-          v-if="!hasTradingEnabled"
-          size="is-large"
-          type="is-primary"
-          :disabled="tokensToAdd < 1"
-          expanded
-          @click="createExchange">
-            Enable Trading
-        </b-button>
-
-        <b-button
-          v-else
           size="is-large"
           type="is-primary"
           :disabled="tokensToAdd < 1"
@@ -114,18 +103,14 @@
 
 <script>
 import axios from 'axios';
-import Web3 from 'web3';
 import PurchaseCardList from '@/components/PurchaseCardList.vue';
 
 import ListingCard from '@/components/ListingCard.vue';
 
 let listingABI;
-let uniswapABI;
-let exchangeABI;
-let uniswapRopsten = '0x9c83dCE8CA20E9aAF9D3efc003b2ea62aBC08351';
-let uniswapFctContract;
-
-let web3;
+let uniswapRouterAddress = '0xf164fC0Ec4E93095b804a4795bBe1e041497b92a';
+let uniswapRouterABI;
+let daiAddress = '0xad6d458402f60fd3bd25163575031acdce07538d';
 
 // approve(delegateAddress, numTokens)
 // transfer(receiverAddress, numTokens)
@@ -148,86 +133,82 @@ export default {
       deployer: null,
       unsold: null,
       tokensToAdd: 0,
-      exchangeAddress: null,
       purchases: []
     }
   },
   async mounted() {
     let resp = await axios.get(`/api/listing/cusipNo/${this.$route.params.cusipNo}`);
     this.listing = resp.data;
-    let listingABIRes = await axios.get("/contracts/FundToken.abi");
+    let listingABIRes = await axios.get("/contracts/UniswapV2ERC20.abi");
     listingABI = listingABIRes.data;
-    let uniswapABIRes = await axios.get("/contracts/UniswapFactory.abi");
-    uniswapABI = uniswapABIRes.data;
-    let exchangeABIRes = await axios.get("/contracts/UniswapExchange.abi");
-    exchangeABI = exchangeABIRes.data;
-    await window.ethereum.enable();
-    web3 = new Web3(window.web3.currentProvider);
+    let uniswapRouterABIRes = await axios.get("/contracts/IUniswapV2Router01.abi");
+    uniswapRouterABI = uniswapRouterABIRes.data.abi;
+    let web3 = this.$store.getters.web3;
     this.contract = new web3.eth.Contract(listingABI, this.listing.contractAddress);
     this.deployer = await this.contract.methods.deployer().call();
     this.unsold = await this.contract.methods.balanceOf(this.deployer).call();
     this.purchases = (await axios.get(`/api/purchase/listing/${this.listing._id}`)).data;
-    uniswapFctContract = new web3.eth.Contract(uniswapABI, uniswapRopsten);
-    this.exchangeAddress = await uniswapFctContract.methods.getExchange(this.listing.contractAddress).call();
     this.ready = true;
   },
   computed: {
-    hasTradingEnabled() {
-      return this.exchangeAddress !== "0x0000000000000000000000000000000000000000";
-    },
     dollarValue() {
       return this.tokensToAdd * (this.listing.principal / this.listing.tokenSupply);
     }
   },
   methods: {
-    async createExchange() {
-      let acc = (await web3.eth.getAccounts())[0];
-
-      let options = {
-        from: acc
-      };
-      
-      let ex = await uniswapFctContract.methods.createExchange(this.listing.contractAddress).send(options);
-
-      console.log(ex);
-
-      let postData = {
-        user: this.$auth.user,
-        listing: this.listing,
-        exchangeAddress: ex.events.NewExchange.address
-      };
-
-      console.log(postData);
-
-      let tpool = await axios.post("/api/trading-pool/", postData);
-      
-      console.log(tpool);
-
-      this.exchangeAddress = ex.events.NewExchange.address;
-
-    },
     async addFunds() {
       
-      
+      let web3 = this.$store.getters.web3;
       let acc = (await web3.eth.getAccounts())[0];
-
-      let total = this.dollarValue;
-      let sendVal = web3.utils.toWei((Math.ceil(total) * this.USD_TO_ETH).toString());
+      let total = Math.ceil(this.dollarValue);
 
       let opts = {
         from: acc,
-        value: sendVal
       };
 
-      let exContract = new web3.eth.Contract(exchangeABI, this.exchangeAddress);
 
-      console.log(exContract);
+      let listingABIRes = await axios.get("/contracts/UniswapV2ERC20.abi");
+      let listingABI = listingABIRes.data;
+      let listingContract = new web3.eth.Contract(listingABI, this.listing.contractAddress);
 
-      let expiryTime = Math. round((new Date().getTime() / 1000) + (60 * 60 * 30));
+      // approve thr router for tokens
+      await listingContract.methods.approve(uniswapRouterAddress, total).send(opts);
       
-      let rx = await exContract.methods.addLiquidity(1, this.tokensToAdd, expiryTime).send(opts);
-      console.log(rx);
+      let router = new web3.eth.Contract(uniswapRouterABI, uniswapRouterAddress);
+      let expiryTime = Math.round((new Date().getTime() / 1000) + (60 * 60 * 12));
 
+
+      console.log(router);
+      console.log(
+                  daiAddress,
+                  this.listing.contractAddress,
+                  total,
+                  this.tokensToAdd,
+                  Math.floor(total * 0.9),
+                  Math.floor(this.tokensToAdd * 0.9),
+                  acc,
+                  expiryTime
+                  );
+
+
+      opts = {
+        from: acc,
+        gas: 10000000
+        // gasPrice: web3.utils.toWei('2', 'gwei')
+      };
+
+      let tx = await router.methods.addLiquidity(
+                                                  daiAddress,
+                                                  this.listing.contractAddress,
+                                                  total,
+                                                  this.tokensToAdd,
+                                                  Math.floor(total * 0.9),
+                                                  Math.floor(this.tokensToAdd * 0.9),
+                                                  acc,
+                                                  expiryTime
+                                                ).send(opts);
+      console.log(tx);
+      
       
     }
   }
