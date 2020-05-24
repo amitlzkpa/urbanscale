@@ -210,27 +210,13 @@ export default {
       
       
       let acc = (await web3.eth.getAccounts())[0];
-      console.log(acc);
-
-
-      // -------------------------------------
-      // let options = {
-      //   from: acc
-      // };
-
-      // let tx = await this.contract.methods.approve(this.exchangeAddress, this.tokensToAdd).send(options);
-      // console.log(tx);
-      // -------------------------------------
-
 
       let total = this.dollarValue;
       let sendVal = web3.utils.toWei((Math.ceil(total) * this.USD_TO_ETH).toString());
 
-      console.log(this.exchangeAddress);
-
       let opts = {
-        from: this.exchangeAddress.toString(),
-        value: sendVal,
+        from: acc,
+        value: sendVal
       };
 
       let exContract = new web3.eth.Contract(exchangeABI, this.exchangeAddress);
@@ -238,9 +224,8 @@ export default {
       console.log(exContract);
 
       let expiryTime = Math. round((new Date().getTime() / 1000) + (60 * 60 * 30));
-      console.log(expiryTime);
       
-      let rx = await exContract.methods.addLiquidity(0, this.tokensToAdd, expiryTime).send(opts);
+      let rx = await exContract.methods.addLiquidity(1, this.tokensToAdd, expiryTime).send(opts);
       console.log(rx);
 
       
