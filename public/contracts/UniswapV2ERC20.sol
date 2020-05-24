@@ -14,7 +14,7 @@ contract UniswapV2ERC20 is IUniswapV2ERC20 {
     uint256 public maturityDate;
     uint256 public coupon;
     uint256 public principal;
-    address public deployer;
+    address payable public deployer;
 
     uint8 public constant decimals = 18;
     uint  public totalSupply;
@@ -43,9 +43,8 @@ contract UniswapV2ERC20 is IUniswapV2ERC20 {
         maturityDate = _maturityDate;
         principal = _principal;
         coupon = _coupon;
-        totalSupply = _totalSupply;
-        balanceOf[msg.sender] = totalSupply;
         deployer = msg.sender;
+        _mint(deployer, _totalSupply);
         uint chainId;
         assembly {
             chainId := chainid
@@ -114,5 +113,21 @@ contract UniswapV2ERC20 is IUniswapV2ERC20 {
         address recoveredAddress = ecrecover(digest, v, r, s);
         require(recoveredAddress != address(0) && recoveredAddress == owner, 'UniswapV2: INVALID_SIGNATURE');
         _approve(owner, spender, value);
+    }
+    
+    function buy(uint256 value) external payable returns(uint256) {
+        uint256 totalCost = value.mul(principal / totalSupply);
+        require (totalCost <= msg.value);
+        require(balanceOf[deployer] >= value);
+        _approve(deployer, msg.sender, value);
+        _transfer(deployer, msg.sender, value);
+        return balanceOf[msg.sender];
+    }
+    
+    function withdraw() external payable returns(uint256) {
+        require (msg.sender == deployer);
+        uint256 amount = balanceOf[deployer];
+        deployer.transfer(amount);
+        return amount;
     }
 }

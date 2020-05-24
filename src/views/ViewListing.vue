@@ -120,7 +120,7 @@ export default {
   async mounted() {
     let resp = await axios.get(`/api/listing/cusipNo/${this.$route.params.cusipNo}`);
     this.listing = resp.data;
-    let abiRes = await axios.get("/contracts/FundToken.abi");
+    let abiRes = await axios.get("/contracts/UniswapV2ERC20.abi");
     abiDefinition = abiRes.data;
     this.purchases = (await axios.get(`/api/purchase/listing/${this.listing._id}`)).data;
     this.ready = true;
