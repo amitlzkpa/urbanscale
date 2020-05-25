@@ -1,7 +1,6 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
 import Home from '@/views/Home.vue';
-import About from '@/views/About.vue';
 import Profile from '@/views/Profile.vue';
 import CreateListing from '@/views/CreateListing.vue';
 import ViewListing from '@/views/ViewListing.vue';
@@ -51,11 +50,6 @@ const router =  new VueRouter({
       path: '/listings',
       name: 'view-all',
       component: ListingCardList
-    },
-    {
-      path: '/about',
-      name: 'about',
-      component: About
     },
     {
       path: '/profile',
