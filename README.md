@@ -10,6 +10,7 @@ Financial economists who study bond markets have widely attributed this to the l
 The Open, Public, Electronic and Necessary (OPEN) Government Data Act provides a sweeping, government-wide mandate for federal agencies to publish all their information as open data.
 
 [DEMO](https://urbanscale.herokuapp.com/)  
+[VIDEO](https://www.youtube.com/watch?v=RktVKbz6Avc)
 
 UrbanScale is a platform for public institution to issue bonds to secure financing and a platform for individuals to invest in bonds of their choosing.
 
